@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEasy - Login</title>
+
+    <link rel="stylesheet" href="styles/auth.css">
+</head>
+<body>
+
+    <div class="auth-container">
+
+        <div class="auth-box">
+
+            <div class="brand">
+                ShopEasy
+            </div>
+
+            <p class="subtitle">
+                Welcome Back 👋
+            </p>
+
+            <h2>Login</h2>
+
+            <form id="login-form">
+
+                <div class="input-group">
+                    <label>Email</label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email"
+                        required
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Enter your password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            onclick="togglePassword()"
+                        >
+                            👁️
+                        </button>
+
+                    </div>
+                </div>
+
+                <a href="#" class="forgot-password">
+                    Forgot Password?
+                </a>
+
+                <button
+                    type="submit"
+                    class="auth-btn"
+                >
+                    Login
+                </button>
+
+            </form>
+
+            <div class="auth-link">
+
+                Don't have an account?
+
+                <a href="signup.html">
+                    Sign Up
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        function togglePassword() {
+
+            const password =
+                document.getElementById("password");
+
+            if (password.type === "password") {
+                password.type = "text";
+            } else {
+                password.type = "password";
+            }
+
+        }
+
+        console.log("LOGIN JS WORKING");
+
+        document
+            .getElementById("login-form")
+            .addEventListener("submit", function(event) {
+
+                event.preventDefault();
+
+                const email =
+                    document.getElementById("email").value;
+
+                const password =
+                    document.getElementById("password").value;
+
+                if (
+                    email.trim() === "" ||
+                    password.trim() === ""
+                ) {
+
+                    alert("Please fill all fields.");
+
+                    return;
+                }
+
+                alert("Login Successful! 🎉");
+
+                window.location.href = "index.html";
+
+            });
+
+    </script>
+
+</body>
+</html>
+<p id="match-error" class="error-message"></p>
