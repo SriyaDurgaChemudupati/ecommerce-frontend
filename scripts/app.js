@@ -11,10 +11,12 @@ hamburger.addEventListener("click", () => {
     navbar.classList.toggle("active");
 });
 const productGrid = document.getElementById("product-grid");
+const loading = document.getElementById("loading");
 
 fetch("https://fakestoreapi.com/products")
     .then(response => response.json())
     .then(products => {
+        loading.remove();
 
         products.forEach(product => {
 
@@ -22,11 +24,13 @@ fetch("https://fakestoreapi.com/products")
             card.classList.add("product-card");
 
             card.innerHTML = `
-                <img src="${product.image}" alt="${product.title}" loading="lazy">
-                <h3>${product.title}</h3>
-                <p>$${product.price}</p>
-                <button>Add to Cart</button>
-            `;
+    <img src="${product.image}" alt="${product.title}" loading="lazy">
+    <h3>${product.title}</h3>
+    <p>₹${Math.round(product.price * 83)}</p>
+    <small>${product.description.substring(0, 80)}...</small>
+    <br><br>
+    <button>Add to Cart</button>
+`;
 
             productGrid.appendChild(card);
 
@@ -34,5 +38,11 @@ fetch("https://fakestoreapi.com/products")
 
     })
     .catch(error => {
-        console.error("Error loading products:", error);
-    });
+
+    console.error("Error loading products:", error);
+
+    productGrid.innerHTML = `
+        <p>Failed to load products. Please try again later.</p>
+    `;
+
+});
