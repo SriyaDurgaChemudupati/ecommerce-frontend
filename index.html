@@ -13,30 +13,32 @@
 <body>
 
     <header>
-        <div class="logo">ShopEasy</div>
+    <div class="logo">ShopEasy</div>
 
-        <nav class="navbar">
-            <ul class="nav-links">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Products</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
+    <ul class="nav-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Products</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+    </ul>
 
-        <div class="header-right">
-            <input type="text" placeholder="Search products..." class="search-bar">
+    <div class="header-right">
 
-            <div class="cart">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="cart-count">0</span>
-            </div>
+        <input
+            type="text"
+            class="search-bar"
+            placeholder="Search products..."
+        >
 
-            <div class="hamburger">
-                <i class="fas fa-bars"></i>
-            </div>
+        <div
+            class="cart"
+            onclick="window.location.href='cart.html'"
+        >
+            🛒 <span class="cart-count">0</span>
         </div>
-    </header>
+
+    </div>
+</header>
 
     
     <section class="hero">
