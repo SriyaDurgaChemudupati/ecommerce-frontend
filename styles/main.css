@@ -97,3 +97,79 @@ header {
         width: 120px;
     }
 }
+/* Hero Section */
+.hero {
+    height: 90vh;
+    background: linear-gradient(rgba(0,0,0,0.5),
+                rgba(0,0,0,0.5)),
+                url("https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1600&q=80");
+
+    background-size: cover;
+    background-position: center;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    color: white;
+}
+
+.hero-content {
+    max-width: 700px;
+    animation: fadeIn 1.5s ease;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+}
+
+.cta-btn {
+    display: inline-block;
+    padding: 12px 25px;
+    background: #ff6600;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.cta-btn:hover {
+    background: #e65c00;
+    transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+        padding: 0 15px;
+    }
+
+    .cta-btn {
+        padding: 10px 20px;
+    }
+}
