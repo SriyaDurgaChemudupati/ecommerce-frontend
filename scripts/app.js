@@ -21,6 +21,11 @@ fetch("https://fakestoreapi.com/products")
         products.forEach(product => {
 
             const card = document.createElement("div");
+            card.style.cursor = "pointer";
+
+card.addEventListener("click", () => {
+    window.location.href = `product.html?id=${product.id}`;
+});
             card.classList.add("product-card");
 
             card.innerHTML = `
@@ -46,3 +51,10 @@ fetch("https://fakestoreapi.com/products")
     `;
 
 });
+const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+const cartCount = document.querySelector(".cart-count");
+
+if (cartCount) {
+    cartCount.textContent = cart.length;
+}

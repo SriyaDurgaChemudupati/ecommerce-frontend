@@ -247,3 +247,28 @@ header {
 html {
     scroll-behavior: smooth;
 }
+.product-details {
+    max-width: 800px;
+    margin: 50px auto;
+    text-align: center;
+    padding: 20px;
+}
+
+.product-details img {
+    width: 300px;
+    max-width: 100%;
+    height: auto;
+}
+
+.product-details h2 {
+    margin-top: 20px;
+}
+
+.product-details button {
+    background: #ff6600;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
