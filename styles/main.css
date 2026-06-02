@@ -9,12 +9,34 @@ body {
 }
 
 header {
+    position: fixed; /* Keeps the header and cart visible at all times */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10050; /* Keeps it above everything else, including your mobile menu */
+    
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #222;
     color: white;
     padding: 15px 30px;
+}
+
+/* Compensate for the fixed header so the Hero image doesn't slide underneath it */
+.hero {
+    margin-top: 60px; /* Adjust this value if needed to match your header's actual height */
+    height: 90vh;
+    background: linear-gradient(rgba(0,0,0,0.5),
+                rgba(0,0,0,0.5)),
+                url("https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1600&q=80");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
 }
 
 .logo {
@@ -330,4 +352,66 @@ html {
 .active-color {
     background: orange;
     color: white;
+}
+.cart-message {
+    position: fixed;
+    /* Increased top space so it appears right below your fixed header (roughly 70px-80px down) */
+    top: 80px; 
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 8px;
+    
+    /* Higher than the header (10050) so it explicitly sits on top of everything */
+    z-index: 10100; 
+    
+    animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+#add-cart {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    /* Increased z-index ensures it sits safely above hero sliders, 
+       product images, and fixed cart alert animations */
+    z-index: 10000; 
+
+    background: #ff6600;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 50px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    
+    /* Optional: Smoothly lifts the button if hovered while scrolling */
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    cursor: pointer; 
+}
+
+#add-cart:hover {
+    background: #e65c00;
+    transform: translateY(-2px);
 }

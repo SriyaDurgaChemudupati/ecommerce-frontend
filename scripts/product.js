@@ -3,15 +3,34 @@ const productId = params.get("id");
 
 const productDetails = document.getElementById("product-details");
 
+function updateCartCount() {
+
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    const totalItems = cart.reduce(
+        (sum, item) => sum + (item.quantity || 1),
+        0
+    );
+
+    const cartCount = document.querySelector(".cart-count");
+
+    if (cartCount) {
+        cartCount.textContent = totalItems;
+    }
+}
+
+updateCartCount();
+
 fetch(`https://fakestoreapi.com/products/${productId}`)
     .then(response => response.json())
     .then(product => {
 
         productDetails.innerHTML = `
-            <img id="product-image"
-                 src="${product.image}"
-                 alt="${product.title}"
-                 class="zoom-image">
+            <img
+                src="${product.image}"
+                alt="${product.title}"
+                class="zoom-image"
+            >
 
             <h2>${product.title}</h2>
 
@@ -36,17 +55,17 @@ fetch(`https://fakestoreapi.com/products/${productId}`)
             <label>Color:</label>
 
             <div class="color-options">
-                <button class="color-btn" data-color="Black">Black</button>
-                <button class="color-btn" data-color="Blue">Blue</button>
-                <button class="color-btn" data-color="Red">Red</button>
+                <button type="button" class="color-btn" data-color="Black">Black</button>
+                <button type="button" class="color-btn" data-color="Blue">Blue</button>
+                <button type="button" class="color-btn" data-color="Red">Red</button>
             </div>
 
             <p id="selected-color">Selected: Black</p>
 
             <div class="quantity-container">
-                <button id="minus">−</button>
+                <button type="button" id="minus">−</button>
                 <span id="quantity">1</span>
-                <button id="plus">+</button>
+                <button type="button" id="plus">+</button>
             </div>
 
             <br>
@@ -70,6 +89,7 @@ fetch(`https://fakestoreapi.com/products/${productId}`)
 
             totalPrice.textContent =
                 "₹" + (product.price * 83 * quantity).toLocaleString("en-IN");
+
         });
 
         document.getElementById("minus").addEventListener("click", () => {
@@ -83,6 +103,7 @@ fetch(`https://fakestoreapi.com/products/${productId}`)
                 totalPrice.textContent =
                     "₹" + (product.price * 83 * quantity).toLocaleString("en-IN");
             }
+
         });
 
         document.querySelectorAll(".color-btn").forEach(btn => {
@@ -94,33 +115,62 @@ fetch(`https://fakestoreapi.com/products/${productId}`)
                 document.getElementById("selected-color").textContent =
                     "Selected: " + selectedColor;
 
-                document.querySelectorAll(".color-btn").forEach(b =>
-                    b.classList.remove("active-color")
+                document.querySelectorAll(".color-btn").forEach(button =>
+                    button.classList.remove("active-color")
                 );
 
                 btn.classList.add("active-color");
+
             });
 
         });
 
         document.getElementById("add-cart").addEventListener("click", () => {
 
-            let cart =
-                JSON.parse(localStorage.getItem("cart")) || [];
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-            cart.push({
-                ...product,
-                quantity: quantity,
-                color: selectedColor,
-                size: document.getElementById("size").value
-            });
+            const selectedSize =
+                document.getElementById("size").value;
+
+            const existingProduct = cart.find(item =>
+                item.id === product.id &&
+                item.size === selectedSize &&
+                item.color === selectedColor
+            );
+
+            if (existingProduct) {
+
+                existingProduct.quantity += quantity;
+
+            } else {
+
+                cart.push({
+                    ...product,
+                    quantity: quantity,
+                    size: selectedSize,
+                    color: selectedColor
+                });
+
+            }
 
             localStorage.setItem(
                 "cart",
                 JSON.stringify(cart)
             );
 
-            alert("Product added to cart!");
+            updateCartCount();
+
+            const msg = document.createElement("div");
+
+            msg.textContent = "✅ Added to Cart!";
+            msg.className = "cart-message";
+
+            document.body.appendChild(msg);
+
+            setTimeout(() => {
+                msg.remove();
+            }, 2000);
+
         });
 
     })
