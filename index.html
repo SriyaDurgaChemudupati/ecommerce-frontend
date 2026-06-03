@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Commerce Frontend</title>
+    <title>ShopEasy - Home</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
 <header>
-    <div class="logo">ShopEasy</div>
+    <div class="logo" onclick="window.location.href='index.html'">
+        ShopEasy
+    </div>
 
     <div class="hamburger">
         <i class="fas fa-bars"></i>
@@ -22,18 +24,21 @@
         <li><a href="#about">About</a></li>
         <li><a href="#contact">Contact</a></li>
 
-        <span id="auth-nav-container" class="auth-wrapper">
-            <li><a href="login.html" id="login-link">Login</a></li>
-            <li><a href="signup.html" id="signup-link">Signup</a></li>
-        </span>
+        <li id="auth-nav-container" class="auth-links">
+            <a href="login.html">Login</a>
+            <a href="signup.html">Signup</a>
+        </li>
     </ul>
 
     <div class="header-right">
+
         <input
             type="text"
+            id="search-input"
             class="search-bar"
             placeholder="Search products..."
         >
+
 
         <div
             class="cart"
@@ -41,19 +46,15 @@
         >
             🛒 <span class="cart-count">0</span>
         </div>
+
     </div>
 </header>
 
 <section class="hero">
     <div class="hero-content">
         <h1>Biggest Sale of the Year!</h1>
-        <p>
-            Discover amazing deals on your favorite products.
-            Shop now and save big.
-        </p>
-        <a href="#products" class="cta-btn">
-            Shop Now
-        </a>
+        <p>Discover amazing deals on your favorite products. Shop now and save big.</p>
+        <a href="#products" class="cta-btn">Shop Now</a>
     </div>
 </section>
 
@@ -64,78 +65,73 @@
     </div>
 </section>
 
-<section id="about" class="info-section-wrapper">
-    <div class="section-header">
-        <h2>About ShopEasy</h2>
-        <p>
-            ShopEasy provides quality products at affordable prices.
-            We focus on fast delivery, secure payments and a smooth
-            shopping experience for everyone.
-        </p>
-    </div>
-
-    <div class="about-features-grid">
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fa-solid fa-truck-fast"></i>
-            </div>
-            <h3>Fast Delivery</h3>
-            <p>Get your products delivered quickly and safely.</p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fa-solid fa-shield-halved"></i>
-            </div>
-            <h3>Secure Payments</h3>
-            <p>Shop confidently with encrypted and secure payment methods.</p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fa-solid fa-headset"></i>
-            </div>
-            <h3>24/7 Support</h3>
-            <p>Our support team is available whenever you need assistance.</p>
-        </div>
-    </div>
-</section>
-
-<section id="contact" class="info-section-wrapper">
-    <div class="section-header">
-        <h2>Contact Us</h2>
-        <p>Have questions or feedback? Send us a message.</p>
-    </div>
-
-    <div class="contact-container">
-        <form id="contact-form" class="styled-contact-form">
-            <div class="field-wrapper">
-                <label for="form-name">Full Name</label>
-                <input type="text" id="form-name" placeholder="Enter your name" required>
-            </div>
-
-            <div class="field-wrapper">
-                <label for="form-email">Email</label>
-                <input type="email" id="form-email" placeholder="Enter your email" required>
-            </div>
-
-            <div class="field-wrapper">
-                <label for="form-message">Message</label>
-                <textarea id="form-message" rows="5" placeholder="Enter your message" required></textarea>
-            </div>
-
-            <button type="submit" class="cta-btn">Send Message</button>
-        </form>
-    </div>
-</section>
-
 <div id="product-modal" class="product-modal-overlay">
     <div class="modal-content-card">
         <span class="modal-close-btn">&times;</span>
-        <div id="modal-dynamic-body">
-            </div>
+        <div id="modal-dynamic-body"></div>
     </div>
 </div>
+
+<section id="about" class="about-section">
+    <div class="about-card">
+        <h2>About ShopEasy</h2>
+
+        <p>
+            ShopEasy is your trusted online shopping destination,
+            offering high-quality products at affordable prices.
+            We focus on customer satisfaction, secure shopping,
+            and fast delivery to make your shopping experience
+            simple and enjoyable.
+        </p>
+    </div>
+</section>
+
+<section id="contact" class="contact-section">
+    <div class="contact-card">
+        <h2>Contact Us</h2>
+        <p>Have questions? We'd love to hear from you.</p>
+
+        <form id="contact-form">
+
+            <div class="input-group">
+                <label>Full Name</label>
+                <input
+                    type="text"
+                    id="form-name"
+                    placeholder="Enter your name"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <label>Email Address</label>
+                <input
+                    type="email"
+                    id="form-email"
+                    placeholder="Enter your email"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <label>Message</label>
+                <textarea
+                    placeholder="Write your message..."
+                    rows="5"
+                    required
+                ></textarea>
+            </div>
+
+            <button type="submit" class="contact-btn">
+                Send Message
+            </button>
+            <div class="button-container">
+
+    
+
+        </form>
+    </div>
+</section>
 
 <footer>
     <p>© 2026 ShopEasy. All Rights Reserved.</p>
@@ -145,16 +141,12 @@
 <script type="module" src="scripts/auth-state.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const contactForm = document.getElementById('contact-form');
-    if(contactForm){
-        contactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert("Thank you! Your message has been sent.");
-            contactForm.reset();
-        });
-    }
-});
+    // Simple contact form alert
+    document.getElementById('contact-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert("Thank you! Your message has been sent.");
+        e.target.reset();
+    });
 </script>
 
 </body>

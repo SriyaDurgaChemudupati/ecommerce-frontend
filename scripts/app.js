@@ -1,239 +1,422 @@
+console.log("APP JS LOADED");
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Core Global DOM Selectors
+
     const productGrid = document.getElementById('product-grid');
-    const hamburger = document.querySelector('.hamburger');
-    const navLinks = document.querySelector('.nav-links');
-    
-    // Modal Element Hooks
     const productModal = document.getElementById('product-modal');
-    const modalCloseBtn = document.querySelector('.modal-close-btn');
     const modalDynamicBody = document.getElementById('modal-dynamic-body');
+    const cartCount = document.querySelector('.cart-count');
 
-    // Global cache for products
     let globalProductsCache = [];
+    let activeProduct = null;
+    // =========================
+// HAMBURGER MENU
+// =========================
+const hamburger = document.querySelector('.hamburger');
+const navLinks = document.querySelector('.nav-links');
 
-    // Initialize Navbar Cart Counter Badge right away on load
-    updateCartNavbarBadge();
+if (hamburger && navLinks) {
+    hamburger.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+    });
+}
+    // =========================
 
-    // 2. Mobile Menu Toggle Logic
-    if (hamburger && navLinks) {
-        hamburger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
+
+    // =========================
+    // MODAL HELPERS
+    // =========================
+    const closeModal = () => {
+        if (productModal) {
+            productModal.classList.remove('open-modal');
+        }
+    };
+
+    // =========================
+    // CART BADGE
+    // =========================
+    function updateBadge() {
+        const cart = JSON.parse(localStorage.getItem('shopEasyCart')) || [];
+
+        const total = cart.reduce((sum, item) => {
+            return sum + (Number(item.qty) || 0);
+        }, 0);
+
+        if (cartCount) {
+            cartCount.textContent = total;
+        }
+    }
+
+    updateBadge();
+
+    // =========================
+    // SAVE TO CART
+    // =========================
+    function saveToCart(product, qty, size, color) {
+
+        let cart = JSON.parse(localStorage.getItem('shopEasyCart')) || [];
+
+        const priceValue = Math.round(product.price * 83);
+
+        cart.push({
+            id: product.id,
+            title: product.title,
+            price: priceValue,
+            qty: parseInt(qty),
+            size,
+            color,
+            image: product.image
+        });
+
+        localStorage.setItem(
+            'shopEasyCart',
+            JSON.stringify(cart)
+        );
+
+        updateBadge();
+
+        alert("Added to cart!");
+    }
+
+    // =========================
+    // PRODUCT MODAL
+    // =========================
+    function openModal(product) {
+
+        modalDynamicBody.innerHTML = `
+            <div class="modal-product">
+
+                <div class="modal-image-container">
+                    <img
+                        src="${product.image}"
+                        id="zoom-target"
+                        class="modal-product-image"
+                        alt="${product.title}"
+                    >
+                </div>
+
+                <h2>${product.title}</h2>
+
+                <p class="price">
+                    ₹${Math.round(product.price * 83).toLocaleString('en-IN')}
+                </p>
+
+                <p>${product.description}</p>
+
+                <div class="variant-selector">
+                    <label>Size</label>
+                    <select id="size-select">
+                        <option>Small</option>
+                        <option>Medium</option>
+                        <option>Large</option>
+                        <option>XL</option>
+                    </select>
+                </div>
+
+                <div class="variant-selector">
+                    <label>Color</label>
+                    <select id="color-select">
+                        <option>Black</option>
+                        <option>White</option>
+                        <option>Blue</option>
+                        <option>Red</option>
+                    </select>
+                </div>
+
+                <div class="variant-selector">
+                    <label>Quantity</label>
+                    <input
+                        type="number"
+                        id="qty"
+                        min="1"
+                        value="1"
+                    >
+                </div>
+
+                <button
+                    id="modal-add"
+                    class="modal-add-btn">
+                    Add To Cart
+                </button>
+
+            </div>
+        `;
+
+        productModal.classList.add('open-modal');
+    }
+
+    // =========================
+    // FETCH PRODUCTS
+    // =========================
+    async function fetchProducts() {
+
+        if (!productGrid) return;
+
+        try {
+
+            const response =
+                await fetch('https://fakestoreapi.com/products');
+
+            const data = await response.json();
+
+            globalProductsCache = data.slice(0, 8);
+
+            renderProducts(globalProductsCache);
+
+        } catch (error) {
+
+            console.error(error);
+
+            productGrid.innerHTML =
+                '<p>Failed to load products.</p>';
+        }
+    }
+
+    // =========================
+    // RENDER PRODUCTS
+    // =========================
+    function renderProducts(products) {
+
+        productGrid.innerHTML = products.map(product => `
+            <div class="product-card">
+
+                <img
+                    src="${product.image}"
+                    alt="${product.title}"
+                >
+
+                <h3>
+                    ${product.title.substring(0, 30)}...
+                </h3>
+
+                <p>
+                    ₹${Math.round(product.price * 83).toLocaleString('en-IN')}
+                </p>
+
+                <div class="button-container">
+
+                    <button
+                        class="view-btn"
+                        data-id="${product.id}">
+                        View
+                    </button>
+
+                    <button
+                        class="add-btn"
+                        data-id="${product.id}">
+                        Add
+                    </button>
+
+                </div>
+
+            </div>
+        `).join('');
+    }
+
+    // =========================
+    // PRODUCT CARD BUTTONS
+    // =========================
+    if (productGrid) {
+
+        productGrid.addEventListener('click', (e) => {
+
+            const button = e.target.closest('button');
+
+            if (!button) return;
+
+            const id = parseInt(button.dataset.id);
+
+            const product =
+                globalProductsCache.find(
+                    p => p.id === id
+                );
+
+            if (!product) return;
+
+            if (button.classList.contains('view-btn')) {
+
+                activeProduct = product;
+
+                openModal(product);
+            }
+
+            if (button.classList.contains('add-btn')) {
+
+                saveToCart(
+                    product,
+                    1,
+                    "Medium",
+                    "Black"
+                );
+            }
         });
     }
 
-    // 3. Modal Box Visibility Management
-    if (modalCloseBtn && productModal) {
-        modalCloseBtn.addEventListener('click', closeModal);
-        window.addEventListener('click', (e) => {
-            if (e.target === productModal) {
+    // =========================
+    // MODAL EVENTS
+    // =========================
+    if (productModal) {
+
+        productModal.addEventListener('mouseover', (e) => {
+
+            if (e.target.id === 'zoom-target') {
+
+                e.target.style.transform = 'scale(1.8)';
+            }
+        });
+
+        productModal.addEventListener('mouseout', (e) => {
+
+            if (e.target.id === 'zoom-target') {
+
+                e.target.style.transform = 'scale(1)';
+            }
+        });
+
+        productModal.addEventListener('click', (e) => {
+
+            if (e.target.id === 'modal-add') {
+
+                const qty =
+                    document.getElementById('qty').value;
+
+                const size =
+                    document.getElementById('size-select').value;
+
+                const color =
+                    document.getElementById('color-select').value;
+
+                saveToCart(
+                    activeProduct,
+                    qty,
+                    size,
+                    color
+                );
+
+                closeModal();
+            }
+
+            if (
+                e.target === productModal ||
+                e.target.classList.contains('modal-close-btn')
+            ) {
                 closeModal();
             }
         });
     }
 
-    function openModal() {
-        if (productModal) productModal.classList.add('open-modal');
-    }
+    // =========================
+    // CART PAGE
+    // =========================
+    function renderCart() {
 
-    function closeModal() {
-        if (productModal) productModal.classList.remove('open-modal');
-    }
+        const cart =
+            JSON.parse(
+                localStorage.getItem('shopEasyCart')
+            ) || [];
 
-    // 4. FakeStore Live Data Pipeline
-    async function fetchProducts() {
-        try {
-            const response = await fetch('https://fakestoreapi.com/products');
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            
-            const data = await response.json();
-            globalProductsCache = data.slice(0, 8); // Keep the first 8 items
-            renderProductGrid(globalProductsCache);
-        } catch (error) {
-            console.error("API Error encountered. Loading fallback data routes:", error);
-            globalProductsCache = getFallbackProducts();
-            renderProductGrid(globalProductsCache);
-        }
-    }
+        const cartItemsContainer =
+            document.getElementById('cart-items');
 
-    // 5. Build Grid UI View Cards
-    function renderProductGrid(items) {
-        if (!productGrid) return;
-        productGrid.innerHTML = '';
+        const totalElement =
+            document.getElementById('cart-total');
 
-        if (items.length === 0) {
-            productGrid.innerHTML = '<p>No featured products available at this moment.</p>';
+        if (!cartItemsContainer || !totalElement) return;
+
+        let total = 0;
+
+        if (cart.length === 0) {
+
+            cartItemsContainer.innerHTML =
+                "<p>Your cart is empty.</p>";
+
+            totalElement.textContent = "0";
+
             return;
         }
 
-        let cardsHTML = '';
-        for (let i = 0; i < items.length; i++) {
-            const product = items[i];
-            const cleanTitle = product.title.length > 35 ? product.title.substring(0, 35) + '...' : product.title;
-            const priceInINR = Math.round(product.price * 83);
+        cartItemsContainer.innerHTML =
+            cart.map((item, index) => {
 
-            cardsHTML += `
-                <div class="product-card" data-id="${product.id}">
-                    <div class="product-image-wrapper">
-                        <img src="${product.image}" alt="${product.title}" loading="lazy" decoding="async">
-                    </div>
-                    <h3>${cleanTitle}</h3>
-                    <p class="product-price">₹${priceInINR.toLocaleString('en-IN')}</p>
-                    
-                    <div class="card-action-row" style="display:flex; gap:10px; margin-top:10px; width: 100%;">
-                        <button class="view-product-btn" data-id="${product.id}" style="width:50%;">View</button>
-                        <button class="add-to-cart-btn" data-id="${product.id}" style="width:50%;">Add</button>
-                    </div>
-                </div>
-            `;
-        }
+                const price =
+                    Number(item.price) || 0;
 
-        productGrid.innerHTML = cardsHTML;
-        setupInteractionEventListeners();
-    }
+                const qty =
+                    Number(item.qty) || 0;
 
-    // 6. Direct Event Interceptor Mappings
-    function setupInteractionEventListeners() {
-        // Quick Add to Cart from Grid View
-        const addButtons = document.querySelectorAll('.add-to-cart-btn');
-        addButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                const productId = parseInt(e.target.getAttribute('data-id')) || e.target.getAttribute('data-id');
-                const targetProduct = globalProductsCache.find(p => p.id === productId);
-                if (targetProduct) {
-                    saveItemToLocalStorage(targetProduct, "Medium", "Black");
-                }
-            });
-        });
+                total += price * qty;
 
-        // Open Detailed View Window Modal
-        const viewButtons = document.querySelectorAll('.view-product-btn');
-        viewButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                const productId = parseInt(e.target.getAttribute('data-id')) || e.target.getAttribute('data-id');
-                triggerDetailedModal(productId);
-            });
-        });
-    }
+                return `
+                    <div class="cart-item">
 
-    // 7. Dynamic Modal Content Engine Setup
-    function triggerDetailedModal(productId) {
-        const targetProduct = globalProductsCache.find(p => p.id === productId);
-        if (!targetProduct || !modalDynamicBody) return;
+                        <img
+                            src="${item.image}"
+                            width="60"
+                        >
 
-        const priceInINR = Math.round(targetProduct.price * 83);
+                        <div>
 
-        modalDynamicBody.innerHTML = `
-            <div class="modal-detailed-view">
-                <img src="${targetProduct.image}" alt="${targetProduct.title}">
-                
-                <div class="modal-info-pane">
-                    <h2>${targetProduct.title}</h2>
-                    <p class="modal-price">₹${priceInINR.toLocaleString('en-IN')}</p>
-                    <p class="modal-desc">${targetProduct.description}</p>
-                    
-                    <div class="modal-actions">
-                        <div class="variant-selector">
-                            <label>Size:</label>
-                            <select id="modal-size-select">
-                                <option value="Small">Small</option>
-                                <option value="Medium" selected>Medium</option>
-                                <option value="Large">Large</option>
-                                <option value="XL">XL</option>
-                            </select>
+                            <h3>${item.title}</h3>
+
+                            <p>Size: ${item.size}</p>
+
+                            <p>Color: ${item.color}</p>
+
+                            <p>Price: ₹${price}</p>
+
+                            <p>Qty: ${qty}</p>
+
+                            <p>
+                                Subtotal:
+                                ₹${price * qty}
+                            </p>
+
+                            <button
+                                onclick="removeCartItem(${index})">
+                                Remove
+                            </button>
+
                         </div>
-                        
-                        <div class="variant-selector" style="margin-bottom: 15px;">
-                            <label>Color:</label>
-                            <select id="modal-color-select">
-                                <option value="Black" selected>Black</option>
-                                <option value="Blue">Blue</option>
-                                <option value="Grey">Grey</option>
-                            </select>
-                        </div>
-                        
-                        <button id="modal-submit-cart" style="background:#ff6600; color:white; border:none; padding:12px; font-weight:bold; width:100%; border-radius:5px; cursor:pointer;">
-                            Add Variant to Cart
-                        </button>
+
                     </div>
-                </div>
-            </div>
-        `;
+                `;
+            }).join('');
 
-        // Add to cart inside modal handler
-        document.getElementById('modal-submit-cart').addEventListener('click', () => {
-            const size = document.getElementById('modal-size-select').value;
-            const color = document.getElementById('modal-color-select').value;
-            saveItemToLocalStorage(targetProduct, size, color);
-            closeModal();
-        });
-
-        openModal();
+        totalElement.textContent =
+            total.toLocaleString('en-IN');
     }
 
-    // 8. LocalStorage Cart Core Save Mechanism
-    function saveItemToLocalStorage(product, size, color) {
-        // Read existing cart array from local storage, or default to an empty list []
-        let cart = JSON.parse(localStorage.getItem('shopEasyCart')) || [];
+    // =========================
+    // REMOVE ITEM
+    // =========================
+    window.removeCartItem = function(index) {
 
-        // Check if this exact product item with the same variant configurations already exists
-        const existingItemIndex = cart.findIndex(item => 
-            item.id === product.id && item.size === size && item.color === color
+        let cart =
+            JSON.parse(
+                localStorage.getItem('shopEasyCart')
+            ) || [];
+
+        cart.splice(index, 1);
+
+        localStorage.setItem(
+            'shopEasyCart',
+            JSON.stringify(cart)
         );
 
-        if (existingItemIndex > -1) {
-            // Increment its item count matching state metrics
-            cart[existingItemIndex].quantity += 1;
-        } else {
-            // Push item data profile parameters dynamically 
-            cart.push({
-                id: product.id,
-                title: product.title,
-                price: Math.round(product.price * 83),
-                image: product.image,
-                size: size,
-                color: color,
-                quantity: 1
-            });
-        }
+        renderCart();
 
-        // Commit modifications right back down to local machine registry
-        localStorage.setItem('shopEasyCart', JSON.stringify(cart));
-        
-        // Update browser badges and fire short confirmation popup
-        updateCartNavbarBadge();
-        alert(`Added to your cart!\n${product.title}\nSize: ${size}\nColor: ${color}`);
-    }
+        updateBadge();
+    };
 
-    function updateCartNavbarBadge() {
-        const cartCountBadge = document.querySelector('.cart-count');
-        if (cartCountBadge) {
-            let cart = JSON.parse(localStorage.getItem('shopEasyCart')) || [];
-            // Sum up total units across all items
-            let totalItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-            cartCountBadge.textContent = totalItemsCount;
-        }
-    }
-
-    // Safe Offline Core Fallbacks
-    function getFallbackProducts() {
-        return [
-            {
-                id: 1,
-                title: "Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops",
-                price: 109.95,
-                description: "Your perfect pack for everyday use and walks in the forest. Stash your laptop (up to 15 inches) in the padded sleeve, your everyday",
-                image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg"
-            },
-            {
-                id: 2,
-                title: "Mens Casual Premium Slim Fit T-Shirts",
-                price: 22.30,
-                description: "Slim-fitting style, contrast raglan long sleeve, three-button henley placket, light weight & soft fabric for breathable and comfortable wearing.",
-                image: "https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg"
-            }
-        ];
-    }
-
+    // =========================
+    // START APP
+    // =========================
     fetchProducts();
+
+    if (document.getElementById('cart-items')) {
+        renderCart();
+    }
 });
+localStorage.setItem(
+    "userName",
+    document.getElementById("name").value
+);

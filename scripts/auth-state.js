@@ -1,39 +1,50 @@
 import { auth } from "./firebase.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-console.log("STOREFRONT AUTH TRACKER ACTIVE");
+import {
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const authContainer = document.getElementById("auth-nav-container");
+const authContainer =
+    document.getElementById("auth-nav-container");
 
-// Continuously listen to Firebase state changes
 onAuthStateChanged(auth, (user) => {
+
     if (user) {
-        // User is logged in -> Update navbar with Greeting and Logout button
-        const savedName = localStorage.getItem("userName") || user.email.split('@')[0];
-        
-        // CHANGED: inline style color altered to #fff (white) for perfect readability
+
+        const userName =
+            localStorage.getItem("userName") ||
+            user.displayName ||
+            user.email.split("@")[0];
+
         authContainer.innerHTML = `
-            <li style="color: #fff; font-weight: 500;">Hi, ${savedName} 👋</li>
-            <li><a href="#" id="logout-btn" style="color: #ff4d4d; font-weight: bold;">Logout</a></li>
+            <span class="welcome-user">
+                Hey, ${userName} 👋
+            </span>
+
+            <a href="#" id="logout-btn">
+                Logout
+            </a>
         `;
 
-        // Attach action listener safely to the freshly updated logout element
-        document.getElementById("logout-btn").addEventListener("click", async (e) => {
-            e.preventDefault();
-            try {
+        document
+            .getElementById("logout-btn")
+            .addEventListener("click", async (e) => {
+
+                e.preventDefault();
+
                 await signOut(auth);
+
                 localStorage.removeItem("userName");
-                alert("Logged out securely. Come back soon! 👋");
-                window.location.reload(); // Hard reloads updates back to initial Login/Signup links
-            } catch (error) {
-                console.error("Signout Failure:", error);
-            }
-        });
+
+                window.location.reload();
+            });
+
     } else {
-        // No active account session -> Restore basic links
+
         authContainer.innerHTML = `
-            <li><a href="login.html" id="login-link">Login</a></li>
-            <li><a href="signup.html" id="signup-link">Signup</a></li>
+            <a href="login.html">Login</a>
+            <a href="signup.html">Signup</a>
         `;
     }
 });
