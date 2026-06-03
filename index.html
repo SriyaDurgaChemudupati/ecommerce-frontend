@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Commerce Frontend</title>
-
     <link rel="stylesheet" href="styles/main.css">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
@@ -53,7 +51,6 @@
             Discover amazing deals on your favorite products.
             Shop now and save big.
         </p>
-
         <a href="#products" class="cta-btn">
             Shop Now
         </a>
@@ -62,14 +59,12 @@
 
 <section id="products" class="products-section">
     <h2>Featured Products</h2>
-
     <div id="product-grid" class="product-grid">
         <p id="loading">Loading products...</p>
     </div>
 </section>
 
 <section id="about" class="info-section-wrapper">
-
     <div class="section-header">
         <h2>About ShopEasy</h2>
         <p>
@@ -80,15 +75,12 @@
     </div>
 
     <div class="about-features-grid">
-
         <div class="feature-card">
             <div class="feature-icon">
                 <i class="fa-solid fa-truck-fast"></i>
             </div>
             <h3>Fast Delivery</h3>
-            <p>
-                Get your products delivered quickly and safely.
-            </p>
+            <p>Get your products delivered quickly and safely.</p>
         </div>
 
         <div class="feature-card">
@@ -96,9 +88,7 @@
                 <i class="fa-solid fa-shield-halved"></i>
             </div>
             <h3>Secure Payments</h3>
-            <p>
-                Shop confidently with encrypted and secure payment methods.
-            </p>
+            <p>Shop confidently with encrypted and secure payment methods.</p>
         </div>
 
         <div class="feature-card">
@@ -106,90 +96,64 @@
                 <i class="fa-solid fa-headset"></i>
             </div>
             <h3>24/7 Support</h3>
-            <p>
-                Our support team is available whenever you need assistance.
-            </p>
+            <p>Our support team is available whenever you need assistance.</p>
         </div>
-
     </div>
-
 </section>
 
 <section id="contact" class="info-section-wrapper">
-
     <div class="section-header">
         <h2>Contact Us</h2>
-        <p>
-            Have questions or feedback? Send us a message.
-        </p>
+        <p>Have questions or feedback? Send us a message.</p>
     </div>
 
     <div class="contact-container">
-
         <form id="contact-form" class="styled-contact-form">
-
             <div class="field-wrapper">
                 <label for="form-name">Full Name</label>
-                <input
-                    type="text"
-                    id="form-name"
-                    placeholder="Enter your name"
-                    required
-                >
+                <input type="text" id="form-name" placeholder="Enter your name" required>
             </div>
 
             <div class="field-wrapper">
                 <label for="form-email">Email</label>
-                <input
-                    type="email"
-                    id="form-email"
-                    placeholder="Enter your email"
-                    required
-                >
+                <input type="email" id="form-email" placeholder="Enter your email" required>
             </div>
 
             <div class="field-wrapper">
                 <label for="form-message">Message</label>
-                <textarea
-                    id="form-message"
-                    rows="5"
-                    placeholder="Enter your message"
-                    required
-                ></textarea>
+                <textarea id="form-message" rows="5" placeholder="Enter your message" required></textarea>
             </div>
 
-            <button type="submit" class="cta-btn">
-                Send Message
-            </button>
-
+            <button type="submit" class="cta-btn">Send Message</button>
         </form>
-
     </div>
-
 </section>
+
+<div id="product-modal" class="product-modal-overlay">
+    <div class="modal-content-card">
+        <span class="modal-close-btn">&times;</span>
+        <div id="modal-dynamic-body">
+            </div>
+    </div>
+</div>
 
 <footer>
     <p>© 2026 ShopEasy. All Rights Reserved.</p>
 </footer>
 
 <script src="scripts/app.js"></script>
-
 <script type="module" src="scripts/auth-state.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-
     const contactForm = document.getElementById('contact-form');
-
     if(contactForm){
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
-
             alert("Thank you! Your message has been sent.");
             contactForm.reset();
         });
     }
-
 });
 </script>
 

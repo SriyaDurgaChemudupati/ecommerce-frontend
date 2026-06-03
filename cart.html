@@ -3,38 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
+    <title>Your Cart - ShopEasy</title>
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
 <header>
-    <h1>ShopEasy</h1>
-
-    <div class="cart">
-        🛒 <span class="cart-count">0</span>
+    <div class="logo" onclick="window.location.href='index.html'" style="cursor:pointer;">ShopEasy</div>
+    <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#products">Products</a></li>
+    </ul>
+    <div class="header-right">
+        <div class="cart" onclick="window.location.href='cart.html'">
+            🛒 <span class="cart-count">0</span>
+        </div>
     </div>
 </header>
 
-<div class="cart-page">
+<main style="padding: 40px 20px; max-width: 1200px; margin: 0 auto; min-height: 70vh;">
+    <div class="cart-container">
+        <h1>Your Shopping Cart</h1>
+        
+        <div class="delivery-details" style="margin: 30px 0; padding: 20px; background: #f9f9f9; border-radius: 8px; border: 1px solid #eee;">
+            <h3 style="margin-top: 0; color: #333; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Shipping Details</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <input type="text" id="ship-name" placeholder="Full Name" style="padding:10px; border: 1px solid #ddd; border-radius: 4px;" required>
+                <input type="text" id="ship-phone" placeholder="Phone Number" style="padding:10px; border: 1px solid #ddd; border-radius: 4px;" required>
+                <input type="text" id="ship-address" placeholder="Delivery Address" style="padding:10px; border: 1px solid #ddd; border-radius: 4px; grid-column: span 2;" required>
+                <input type="text" id="ship-city" placeholder="City" style="padding:10px; border: 1px solid #ddd; border-radius: 4px;">
+                <input type="text" id="ship-pincode" placeholder="Pincode" style="padding:10px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+        </div>
+        
+        <div class="cart-total" style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #eee; text-align: right;">
+            <h2 style="font-size: 1.6rem; margin-bottom: 20px; color: #222;">Total: ₹0</h2>
+            <div class="cart-page-actions" style="display: flex; justify-content: flex-end; gap: 15px;">
+                <button onclick="window.location.href='index.html'" class="cart-btn secondary" style="background: #555; color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 6px; cursor: pointer;">
+                    Continue Shopping
+                </button>
+                <button id="checkout-btn" class="cart-btn primary" style="background: #ff6600; color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 6px; cursor: pointer;">
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
 
-    <h2>Your Cart</h2>
-
-    <div id="cart-items"></div>
-
-    <h3 id="cart-total">Total: ₹0</h3>
-
-    <button onclick="window.location.href='index.html'">
-        Continue Shopping
-    </button>
-
-    <button id="checkout-btn">
-        Proceed to Checkout
-    </button>
-
-</div>
+<footer>
+    <p>© 2026 ShopEasy. All Rights Reserved.</p>
+</footer>
 
 <script src="scripts/cart.js"></script>
+
+<script>
+document.getElementById('checkout-btn').addEventListener('click', () => {
+    const cart = JSON.parse(localStorage.getItem('shopEasyCart')) || [];
+    
+    // Capture Delivery Details
+    const deliveryData = {
+        name: document.getElementById('ship-name').value,
+        phone: document.getElementById('ship-phone').value,
+        address: document.getElementById('ship-address').value,
+        city: document.getElementById('ship-city').value,
+        pincode: document.getElementById('ship-pincode').value
+    };
+
+    if (cart.length === 0) {
+        alert("Your cart is empty! Add items from the homepage first.");
+        return;
+    }
+
+    if (!deliveryData.name || !deliveryData.address || !deliveryData.phone) {
+        alert("Please fill in all delivery details before checking out.");
+        return;
+    }
+
+    alert(`Thank you, ${deliveryData.name}! Your order will be delivered to ${deliveryData.address}, ${deliveryData.city}.`);
+    
+    localStorage.removeItem('shopEasyCart');
+    window.location.href = 'index.html';
+});
+
+// Navbar sync logic
+function syncCartBadge() {
+    const cartCountBadge = document.querySelector('.cart-count');
+    if (cartCountBadge) {
+        const cart = JSON.parse(localStorage.getItem('shopEasyCart')) || [];
+        const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+        cartCountBadge.textContent = totalCount;
+    }
+}
+syncCartBadge();
+window.addEventListener('storage', syncCartBadge);
+</script>
 
 </body>
 </html>
