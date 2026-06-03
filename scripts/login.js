@@ -1,33 +1,64 @@
 import { auth } from "./firebase.js";
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-console.log("LOGIN JS LOADED");
+import {
+  signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Login Form Event Handler
-document.getElementById("login-form").addEventListener("submit", async function (e) {
-    e.preventDefault();
+const form = document.getElementById("login-form");
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    // Send sign-in payload to Firebase
-    try {
-        await signInWithEmailAndPassword(auth, email, password);
+  const email =
+    document.getElementById("login-email").value;
 
-        alert("Login Successful 🎉");
-        window.location.href = "index.html";
-    } catch (error) {
-        console.error("Login error details:", error.code, error.message);
-        
-        // Generic catch handling for invalid setups or missing matching users
-        if (
-            error.code === 'auth/invalid-credential' || 
-            error.code === 'auth/user-not-found' || 
-            error.code === 'auth/wrong-password'
-        ) {
-            alert("Invalid Email or Password ❌");
-        } else {
-            alert(`Authentication Error: ${error.message}`);
-        }
-    }
+  const password =
+    document.getElementById("login-password").value;
+
+  const errorEl =
+    document.getElementById("login-error");
+
+  errorEl.textContent = "";
+
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    window.location.href = "index.html";
+
+  } catch (error) {
+    errorEl.textContent = error.message;
+  }
+});
+const emailInput = document.getElementById("login-email");
+const passwordInput = document.getElementById("login-password");
+
+const emailMsg = document.getElementById("login-email-msg");
+const passwordMsg = document.getElementById("login-password-msg");
+
+emailInput.addEventListener("input", () => {
+    const valid =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
+
+    emailMsg.textContent =
+        valid ? "✓ Valid Email" : "Enter valid email";
+
+    emailMsg.style.color =
+        valid ? "green" : "red";
+});
+
+passwordInput.addEventListener("input", () => {
+    const valid =
+        passwordInput.value.length >= 6;
+
+    passwordMsg.textContent =
+        valid
+            ? "✓ Password looks good"
+            : "Minimum 6 characters";
+
+    passwordMsg.style.color =
+        valid ? "green" : "red";
 });

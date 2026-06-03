@@ -1,422 +1,229 @@
-console.log("APP JS LOADED");
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
+    const productGrid = document.getElementById("product-grid");
+    const productModal = document.getElementById("product-modal");
+    const modalDynamicBody = document.getElementById("modal-dynamic-body");
+    const cartCount = document.querySelector(".cart-count");
 
-    const productGrid = document.getElementById('product-grid');
-    const productModal = document.getElementById('product-modal');
-    const modalDynamicBody = document.getElementById('modal-dynamic-body');
-    const cartCount = document.querySelector('.cart-count');
-
-    let globalProductsCache = [];
+    let products = [];
     let activeProduct = null;
-    // =========================
-// HAMBURGER MENU
-// =========================
-const hamburger = document.querySelector('.hamburger');
-const navLinks = document.querySelector('.nav-links');
+    let lastFocusedElement = null;
 
-if (hamburger && navLinks) {
-    hamburger.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-    });
-}
-    // =========================
-
-
-    // =========================
-    // MODAL HELPERS
-    // =========================
-    const closeModal = () => {
-        if (productModal) {
-            productModal.classList.remove('open-modal');
-        }
-    };
-
-    // =========================
-    // CART BADGE
-    // =========================
-    function updateBadge() {
-        const cart = JSON.parse(localStorage.getItem('shopEasyCart')) || [];
-
-        const total = cart.reduce((sum, item) => {
-            return sum + (Number(item.qty) || 0);
-        }, 0);
-
-        if (cartCount) {
-            cartCount.textContent = total;
-        }
+    function escapeHtml(str) {
+        if (!str) return "";
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
-    updateBadge();
+    function updateBadge() {
+        const cart = JSON.parse(localStorage.getItem("shopEasyCart")) || [];
+        const total = cart.reduce((sum, item) => sum + Number(item.qty || 0), 0);
+        if (cartCount) cartCount.textContent = total;
+    }
 
-    // =========================
-    // SAVE TO CART
-    // =========================
     function saveToCart(product, qty, size, color) {
-
-        let cart = JSON.parse(localStorage.getItem('shopEasyCart')) || [];
-
-        const priceValue = Math.round(product.price * 83);
-
+        const cart = JSON.parse(localStorage.getItem("shopEasyCart")) || [];
         cart.push({
             id: product.id,
             title: product.title,
-            price: priceValue,
-            qty: parseInt(qty),
+            image: product.image,
+            price: Math.round(product.price * 83),
+            qty: Number(qty),
             size,
-            color,
-            image: product.image
+            color
         });
-
-        localStorage.setItem(
-            'shopEasyCart',
-            JSON.stringify(cart)
-        );
-
+        localStorage.setItem("shopEasyCart", JSON.stringify(cart));
         updateBadge();
-
-        alert("Added to cart!");
+        alert("🛒 Added To Cart!");
     }
 
-    // =========================
-    // PRODUCT MODAL
-    // =========================
+    function saveToWishlist(product) {
+        const wishlist = JSON.parse(localStorage.getItem("shopEasyWishlist")) || [];
+        wishlist.push(product);
+        localStorage.setItem("shopEasyWishlist", JSON.stringify(wishlist));
+        alert("❤️ Added To Wishlist!");
+    }
+
+    function closeModal() {
+        if (!productModal) return;
+        productModal.classList.remove("open-modal");
+        productModal.setAttribute("aria-hidden", "true");
+        modalDynamicBody.innerHTML = "";
+        document.documentElement.style.overflow = "";
+        if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+            lastFocusedElement.focus();
+        }
+    }
+
     function openModal(product) {
+        activeProduct = product;
+        lastFocusedElement = document.activeElement;
 
         modalDynamicBody.innerHTML = `
-            <div class="modal-product">
+            <div class="modal-layout" role="document">
+                <div class="modal-main">
+                    <div class="modal-image-container">
+                        <img
+                            src="${product.image}"
+                            class="modal-product-image"
+                            alt="${escapeHtml(product.title)}"
+                        >
+                    </div>
 
-                <div class="modal-image-container">
-                    <img
-                        src="${product.image}"
-                        id="zoom-target"
-                        class="modal-product-image"
-                        alt="${product.title}"
-                    >
+                    <h2>${escapeHtml(product.title)}</h2>
+                    <p class="price">₹${Math.round(product.price * 83)}</p>
+                    <p>${escapeHtml(product.description)}</p>
+
+                    <div class="variant-selector">
+                        <label for="size-select">Size</label>
+                        <select id="size-select">
+                            <option>Small</option>
+                            <option>Medium</option>
+                            <option>Large</option>
+                            <option>XL</option>
+                        </select>
+                    </div>
+
+                    <div class="variant-selector">
+                        <label for="color-select">Color</label>
+                        <select id="color-select">
+                            <option>Black</option>
+                            <option>White</option>
+                            <option>Blue</option>
+                            <option>Red</option>
+                        </select>
+                    </div>
+
+                    <div class="variant-selector">
+                        <label for="qty">Quantity</label>
+                        <input type="number" id="qty" value="1" min="1">
+                    </div>
                 </div>
 
-                <h2>${product.title}</h2>
-
-                <p class="price">
-                    ₹${Math.round(product.price * 83).toLocaleString('en-IN')}
-                </p>
-
-                <p>${product.description}</p>
-
-                <div class="variant-selector">
-                    <label>Size</label>
-                    <select id="size-select">
-                        <option>Small</option>
-                        <option>Medium</option>
-                        <option>Large</option>
-                        <option>XL</option>
-                    </select>
+                <div class="modal-sidebar">
+                    <button id="modal-add" class="modal-add-btn">🛒 Add To Cart</button>
+                    <button id="modal-wishlist" class="wishlist-side-btn">❤️ Add to Wishlist</button>
+                    <button id="modal-close-secondary" class="modal-cancel-btn">Cancel</button>
                 </div>
-
-                <div class="variant-selector">
-                    <label>Color</label>
-                    <select id="color-select">
-                        <option>Black</option>
-                        <option>White</option>
-                        <option>Blue</option>
-                        <option>Red</option>
-                    </select>
-                </div>
-
-                <div class="variant-selector">
-                    <label>Quantity</label>
-                    <input
-                        type="number"
-                        id="qty"
-                        min="1"
-                        value="1"
-                    >
-                </div>
-
-                <button
-                    id="modal-add"
-                    class="modal-add-btn">
-                    Add To Cart
-                </button>
-
             </div>
         `;
 
-        productModal.classList.add('open-modal');
+        productModal.classList.add("open-modal");
+        productModal.setAttribute("aria-hidden", "false");
+
+        const focusable = productModal.querySelector(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable) focusable.focus();
+
+        document.documentElement.style.overflow = "hidden";
     }
 
-    // =========================
-    // FETCH PRODUCTS
-    // =========================
-    async function fetchProducts() {
-
+    function renderProducts() {
         if (!productGrid) return;
+        productGrid.innerHTML = products.map(product => `
+            <div class="product-card" data-id="${product.id}">
+                <img src="${product.image}" alt="${escapeHtml(product.title)}" class="product-thumb">
+                <h3>${escapeHtml(product.title.substring(0, 30))}...</h3>
+                <p class="product-price">₹${Math.round(product.price * 83)}</p>
+                <p class="product-desc">${escapeHtml(product.description.substring(0, 80))}...</p>
+                <div class="button-container">
+                    <button class="wishlist-btn" data-id="${product.id}">❤️ Wishlist</button>
+                    <button class="add-btn" data-id="${product.id}">🛒 Add To Cart</button>
+                </div>
+            </div>
+        `).join("");
+    }
 
+    async function fetchProducts() {
         try {
+            const response = await fetch("https://fakestoreapi.com/products");
+            if (!response.ok) throw new Error("Failed to fetch products");
 
-            const response =
-                await fetch('https://fakestoreapi.com/products');
-
-            const data = await response.json();
-
-            globalProductsCache = data.slice(0, 8);
-
-            renderProducts(globalProductsCache);
-
-        } catch (error) {
-
-            console.error(error);
-
-            productGrid.innerHTML =
-                '<p>Failed to load products.</p>';
+            products = (await response.json()).slice(0, 8);
+            renderProducts();
+        } catch (err) {
+            console.error("Failed to load products:", err);
+            if (productGrid) productGrid.innerHTML = "<p>Unable to load products.</p>";
         }
     }
 
-    // =========================
-    // RENDER PRODUCTS
-    // =========================
-    function renderProducts(products) {
-
-        productGrid.innerHTML = products.map(product => `
-            <div class="product-card">
-
-                <img
-                    src="${product.image}"
-                    alt="${product.title}"
-                >
-
-                <h3>
-                    ${product.title.substring(0, 30)}...
-                </h3>
-
-                <p>
-                    ₹${Math.round(product.price * 83).toLocaleString('en-IN')}
-                </p>
-
-                <div class="button-container">
-
-                    <button
-                        class="view-btn"
-                        data-id="${product.id}">
-                        View
-                    </button>
-
-                    <button
-                        class="add-btn"
-                        data-id="${product.id}">
-                        Add
-                    </button>
-
-                </div>
-
-            </div>
-        `).join('');
-    }
-
-    // =========================
-    // PRODUCT CARD BUTTONS
-    // =========================
     if (productGrid) {
-
-        productGrid.addEventListener('click', (e) => {
-
-            const button = e.target.closest('button');
-
+        productGrid.addEventListener("click", (e) => {
+            const button = e.target.closest("button");
             if (!button) return;
 
-            const id = parseInt(button.dataset.id);
+            e.preventDefault();
 
-            const product =
-                globalProductsCache.find(
-                    p => p.id === id
-                );
-
+            const id = Number(button.dataset.id);
+            const product = products.find(p => p.id === id);
             if (!product) return;
 
-            if (button.classList.contains('view-btn')) {
-
-                activeProduct = product;
-
+            if (button.classList.contains("add-btn")) {
                 openModal(product);
+                return;
             }
 
-            if (button.classList.contains('add-btn')) {
-
-                saveToCart(
-                    product,
-                    1,
-                    "Medium",
-                    "Black"
-                );
+            if (button.classList.contains("wishlist-btn")) {
+                saveToWishlist(product);
+                return;
             }
         });
     }
 
-    // =========================
-    // MODAL EVENTS
-    // =========================
     if (productModal) {
+        productModal.addEventListener("click", (e) => {
+            const target = e.target;
 
-        productModal.addEventListener('mouseover', (e) => {
+            if (target.id === "modal-add") {
+                const qtyEl = document.getElementById("qty");
+                const sizeEl = document.getElementById("size-select");
+                const colorEl = document.getElementById("color-select");
 
-            if (e.target.id === 'zoom-target') {
+                const qty = qtyEl ? qtyEl.value : 1;
+                const size = sizeEl ? sizeEl.value : "";
+                const color = colorEl ? colorEl.value : "";
 
-                e.target.style.transform = 'scale(1.8)';
+                if (activeProduct) {
+                    saveToCart(activeProduct, qty, size, color);
+                }
+                closeModal();
+                return;
             }
-        });
 
-        productModal.addEventListener('mouseout', (e) => {
-
-            if (e.target.id === 'zoom-target') {
-
-                e.target.style.transform = 'scale(1)';
+            if (target.id === "modal-wishlist") {
+                if (activeProduct) {
+                    saveToWishlist(activeProduct);
+                }
+                return;
             }
-        });
 
-        productModal.addEventListener('click', (e) => {
+            if (target.id === "modal-close-secondary" || target.classList.contains("modal-close-btn")) {
+                closeModal();
+                return;
+            }
 
-            if (e.target.id === 'modal-add') {
-
-                const qty =
-                    document.getElementById('qty').value;
-
-                const size =
-                    document.getElementById('size-select').value;
-
-                const color =
-                    document.getElementById('color-select').value;
-
-                saveToCart(
-                    activeProduct,
-                    qty,
-                    size,
-                    color
-                );
-
+            if (target === productModal) {
                 closeModal();
             }
+        });
 
-            if (
-                e.target === productModal ||
-                e.target.classList.contains('modal-close-btn')
-            ) {
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && productModal.classList.contains("open-modal")) {
                 closeModal();
             }
         });
     }
 
-    // =========================
-    // CART PAGE
-    // =========================
-    function renderCart() {
-
-        const cart =
-            JSON.parse(
-                localStorage.getItem('shopEasyCart')
-            ) || [];
-
-        const cartItemsContainer =
-            document.getElementById('cart-items');
-
-        const totalElement =
-            document.getElementById('cart-total');
-
-        if (!cartItemsContainer || !totalElement) return;
-
-        let total = 0;
-
-        if (cart.length === 0) {
-
-            cartItemsContainer.innerHTML =
-                "<p>Your cart is empty.</p>";
-
-            totalElement.textContent = "0";
-
-            return;
-        }
-
-        cartItemsContainer.innerHTML =
-            cart.map((item, index) => {
-
-                const price =
-                    Number(item.price) || 0;
-
-                const qty =
-                    Number(item.qty) || 0;
-
-                total += price * qty;
-
-                return `
-                    <div class="cart-item">
-
-                        <img
-                            src="${item.image}"
-                            width="60"
-                        >
-
-                        <div>
-
-                            <h3>${item.title}</h3>
-
-                            <p>Size: ${item.size}</p>
-
-                            <p>Color: ${item.color}</p>
-
-                            <p>Price: ₹${price}</p>
-
-                            <p>Qty: ${qty}</p>
-
-                            <p>
-                                Subtotal:
-                                ₹${price * qty}
-                            </p>
-
-                            <button
-                                onclick="removeCartItem(${index})">
-                                Remove
-                            </button>
-
-                        </div>
-
-                    </div>
-                `;
-            }).join('');
-
-        totalElement.textContent =
-            total.toLocaleString('en-IN');
+    const hamburger = document.querySelector(".hamburger");
+    const navLinks = document.querySelector(".nav-links");
+    if (hamburger && navLinks) {
+        hamburger.addEventListener("click", () => navLinks.classList.toggle("active"));
     }
 
-    // =========================
-    // REMOVE ITEM
-    // =========================
-    window.removeCartItem = function(index) {
-
-        let cart =
-            JSON.parse(
-                localStorage.getItem('shopEasyCart')
-            ) || [];
-
-        cart.splice(index, 1);
-
-        localStorage.setItem(
-            'shopEasyCart',
-            JSON.stringify(cart)
-        );
-
-        renderCart();
-
-        updateBadge();
-    };
-
-    // =========================
-    // START APP
-    // =========================
+    updateBadge();
     fetchProducts();
-
-    if (document.getElementById('cart-items')) {
-        renderCart();
-    }
 });
-localStorage.setItem(
-    "userName",
-    document.getElementById("name").value
-);

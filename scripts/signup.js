@@ -1,81 +1,113 @@
 import { auth } from "./firebase.js";
-import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-console.log("SIGNUP JS LOADED");
+import {
+  createUserWithEmailAndPassword,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const passwordInput = document.getElementById("password");
-const confirmPassword = document.getElementById("confirm-password");
-const strengthText = document.getElementById("password-strength");
-const matchError = document.getElementById("match-error");
+const passwordInput = document.getElementById("signup-password");
+const confirmInput = document.getElementById("signup-confirm-password");
 
-// Password Strength Live UI updates
+const ruleLength = document.getElementById("rule-length");
+const ruleLower = document.getElementById("rule-lower");
+const ruleUpper = document.getElementById("rule-upper");
+const ruleNumber = document.getElementById("rule-number");
+const ruleSpecial = document.getElementById("rule-special");
+const ruleSpace = document.getElementById("rule-space");
+
+const strengthBar = document.getElementById("password-strength-bar");
+const confirmMsg = document.getElementById("confirm-msg");
+
+function updateRule(element, valid) {
+    element.style.color = valid ? "green" : "red";
+    element.style.fontWeight = valid ? "600" : "400";
+}
+
 passwordInput.addEventListener("input", () => {
-    const password = passwordInput.value;
-    const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 
-    if (strongRegex.test(password)) {
-        strengthText.textContent = "Strong Password ✅";
-        strengthText.style.color = "green";
+    const password = passwordInput.value;
+
+    const lengthOk = password.length >= 8;
+    const lowerOk = /[a-z]/.test(password);
+    const upperOk = /[A-Z]/.test(password);
+    const numberOk = /\d/.test(password);
+    const specialOk = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const noSpaceOk = !/\s/.test(password);
+
+    updateRule(ruleLength, lengthOk);
+    updateRule(ruleLower, lowerOk);
+    updateRule(ruleUpper, upperOk);
+    updateRule(ruleNumber, numberOk);
+    updateRule(ruleSpecial, specialOk);
+    updateRule(ruleSpace, noSpaceOk);
+
+    let score = 0;
+
+    if (lengthOk) score++;
+    if (lowerOk) score++;
+    if (upperOk) score++;
+    if (numberOk) score++;
+    if (specialOk) score++;
+    if (noSpaceOk) score++;
+
+    strengthBar.style.width = `${(score / 6) * 100}%`;
+
+    if (score <= 2) {
+        strengthBar.style.background = "#ef4444";
+    } else if (score <= 4) {
+        strengthBar.style.background = "#f59e0b";
     } else {
-        strengthText.textContent = "Password must contain 8+ characters, uppercase, lowercase and number";
-        strengthText.style.color = "red";
+        strengthBar.style.background = "#22c55e";
     }
 });
 
-// Password Match Live UI updates
-confirmPassword.addEventListener("input", () => {
-    if (confirmPassword.value !== passwordInput.value) {
-        matchError.textContent = "Passwords do not match ❌";
-        matchError.style.color = "red";
+confirmInput.addEventListener("input", () => {
+
+    if (
+        confirmInput.value === passwordInput.value &&
+        confirmInput.value !== ""
+    ) {
+        confirmMsg.textContent = "✓ Passwords match";
+        confirmMsg.style.color = "green";
     } else {
-        matchError.textContent = "Passwords match ✅";
-        matchError.style.color = "green";
+        confirmMsg.textContent = "Passwords do not match";
+        confirmMsg.style.color = "red";
     }
+
 });
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-// Signup Form Event Handler
-document.getElementById("signup-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
+  errorEl.textContent = "";
 
-    const name = document.getElementById("fullname").value;
-    const email = document.getElementById("email").value;
-    const password = passwordInput.value;
-    const confirm = confirmPassword.value;
+  const name = document.getElementById("signup-name").value.trim();
+  const email = document.getElementById("signup-email").value.trim();
+  const password = document.getElementById("signup-password").value;
+  const confirmPassword = document.getElementById("signup-confirm-password").value;
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  if (password !== confirmPassword) {
+    errorEl.textContent = "Passwords do not match";
+    return;
+  }
 
-    // Pre-flight Client Validations
-    if (!emailRegex.test(email)) {
-        alert("Invalid Email Format");
-        return;
-    }
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
-    if (!passwordRegex.test(password)) {
-        alert("Weak Password. Must contain 8+ characters, uppercase, lowercase, and numbers.");
-        return;
-    }
+    await updateProfile(userCredential.user, {
+      displayName: name
+    });
 
-    if (password !== confirm) {
-        alert("Passwords do not match");
-        return;
-    }
+    await userCredential.user.reload();
 
-    // Submit credentials to Firebase
-    try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        
-        // Cache display name locally for personalization on index.html
-        localStorage.setItem("userName", name);
+    alert("Signup successful!");
 
-        alert("Account Created Successfully 🎉");
-        window.location.href = "login.html";
-    } catch (error) {
-        console.error("Signup error details:", error.code, error.message);
-        if (error.code === 'auth/email-already-in-use') {
-            alert("This email is already in use. Please log in instead.");
-        } else {
-            alert(`Registration Failed: ${error.message}`);
-        }
-    }
+    window.location.href = "index.html";
+
+  } catch (error) {
+    errorEl.textContent = error.message;
+  }
 });

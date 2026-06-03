@@ -1,142 +1,60 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopEasy - Sign Up</title>
-
-    <link rel="stylesheet" href="styles/auth.css">
+    <title>Signup - ShopEasy</title>
+    <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
+    <div class="auth-page">
+        <form id="signup-form" class="auth-card">
+            <h2>Create Account</h2>
+            <p>Sign up to start shopping and save your details securely.</p>
 
-<div class="auth-container">
-
-    <div class="auth-box">
-
-        <div class="brand">
-            ShopEasy
-        </div>
-
-        <p class="subtitle">
-            Create Your Account 🚀
-        </p>
-
-        <h2>Sign Up</h2>
-
-        <form id="signup-form">
-
-            <div class="input-group">
-                <label>Full Name</label>
-
-                <input
-                    type="text"
-                    id="fullname"
-                    placeholder="Enter your full name"
-                    required
-                >
+            <div class="field-wrapper">
+                <label for="signup-name">Full Name</label>
+                <input type="text" id="signup-name" placeholder="Enter your name" required>
+                <div class="field-msg" id="name-msg"></div>
             </div>
 
-            <div class="input-group">
-                <label>Email</label>
-
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Enter your email"
-                    required
-                >
+            <div class="field-wrapper">
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" placeholder="Enter your email" required>
+                <div class="field-msg" id="email-msg"></div>
             </div>
 
-            <div class="input-group">
-                <label>Password</label>
+            <div class="field-wrapper">
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" placeholder="Create a password" required>
 
-                <div class="password-wrapper">
-
-                    <input
-                        type="password"
-                        id="password"
-                        placeholder="Create password"
-                        required
-                    >
-
-                    <button
-                        type="button"
-                        onclick="togglePassword('password')"
-                    >
-                        👁️
-                    </button>
-
-                </div>
-            </div>
-
-            <div class="input-group">
-
-                <label>Confirm Password</label>
-
-                <div class="password-wrapper">
-
-                    <input
-                        type="password"
-                        id="confirm-password"
-                        placeholder="Confirm password"
-                        required
-                    >
-
-                    <button
-                        type="button"
-                        onclick="togglePassword('confirm-password')"
-                    >
-                        👁️
-                    </button>
-
+                <div class="password-meter">
+                    <div id="password-strength-bar" class="password-strength-bar"></div>
                 </div>
 
-                <p id="match-error" class="error-message"></p>
+                <ul class="password-rules">
+                    <li id="rule-length">At least 8 characters</li>
+                    <li id="rule-lower">One lowercase letter</li>
+                    <li id="rule-upper">One uppercase letter</li>
+                    <li id="rule-number">One number</li>
+                    <li id="rule-special">One special character</li>
+                    <li id="rule-space">No spaces</li>
+                </ul>
 
+                <div class="field-msg" id="password-msg"></div>
             </div>
 
-            <p id="password-strength"></p>
+            <div class="field-wrapper">
+                <label for="signup-confirm-password">Confirm Password</label>
+                <input type="password" id="signup-confirm-password" placeholder="Confirm your password" required>
+                <div class="field-msg" id="confirm-msg"></div>
+            </div>
 
-            <button
-                type="submit"
-                class="auth-btn"
-            >
-                Sign Up
-            </button>
-
+            <button type="submit">Sign Up</button>
+            <p id="signup-error" class="auth-error"></p>
         </form>
-
-        <div class="auth-link">
-
-            Already have an account?
-
-            <a href="login.html">
-                Login
-            </a>
-
-        </div>
-
     </div>
 
-</div>
-
-<script>
-function togglePassword(id) {
-
-    const field =
-        document.getElementById(id);
-
-    if (field.type === "password") {
-        field.type = "text";
-    } else {
-        field.type = "password";
-    }
-}
-</script>
-
-<script type="module" src="scripts/signup.js"></script>
-
+    <script type="module" src="scripts/signup.js"></script>
 </body>
 </html>
-```

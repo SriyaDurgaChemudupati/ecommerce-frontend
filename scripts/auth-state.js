@@ -1,50 +1,41 @@
 import { auth } from "./firebase.js";
 
 import {
-    onAuthStateChanged,
-    signOut
+  onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const authContainer =
-    document.getElementById("auth-nav-container");
+const authContainer = document.getElementById("auth-nav-container");
 
 onAuthStateChanged(auth, (user) => {
 
-    if (user) {
+  if (user) {
 
-        const userName =
-            localStorage.getItem("userName") ||
-            user.displayName ||
-            user.email.split("@")[0];
+    const userName =
+      user.displayName ||
+      user.email.split("@")[0];
 
-        authContainer.innerHTML = `
-            <span class="welcome-user">
-                Hey, ${userName} 👋
-            </span>
+    authContainer.innerHTML = `
+      <span class="welcome-user">Hello, ${userName}</span>
+      <a href="#" id="logout-btn" class="auth-link">Logout</a>
+    `;
 
-            <a href="#" id="logout-btn">
-                Logout
-            </a>
-        `;
+    document
+      .getElementById("logout-btn")
+      .addEventListener("click", async (e) => {
 
-        document
-            .getElementById("logout-btn")
-            .addEventListener("click", async (e) => {
+        e.preventDefault();
 
-                e.preventDefault();
+        await signOut(auth);
 
-                await signOut(auth);
+        window.location.href = "index.html";
+      });
 
-                localStorage.removeItem("userName");
+  } else {
 
-                window.location.reload();
-            });
-
-    } else {
-
-        authContainer.innerHTML = `
-            <a href="login.html">Login</a>
-            <a href="signup.html">Signup</a>
-        `;
-    }
+    authContainer.innerHTML = `
+      <a href="login.html" class="auth-link">Login</a>
+      <a href="signup.html" class="auth-link">Signup</a>
+    `;
+  }
 });
