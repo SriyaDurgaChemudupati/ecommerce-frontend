@@ -1,16 +1,26 @@
+/* ==========================================================================
+   1. GLOBAL RESETS & BASE STYLES
+   ========================================================================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    padding-top: 70px;
+html {
+    scroll-behavior: smooth;
 }
 
-/* HEADER */
+body {
+    font-family: Arial, sans-serif;
+    padding-top: 80px;
+    background-color: #f9f9f9;
+    color: #333;
+}
 
+/* ==========================================================================
+   2. HEADER & NAVIGATION
+   ========================================================================== */
 header {
     position: fixed;
     top: 0;
@@ -20,27 +30,14 @@ header {
     color: white;
     padding: 15px 30px;
     z-index: 1000;
-
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.logo,
-header h1 {
+.logo {
     font-size: 28px;
     font-weight: bold;
-}
-
-.nav-links {
-    display: flex;
-    gap: 25px;
-    list-style: none;
-}
-
-.nav-links a {
-    color: white;
-    text-decoration: none;
 }
 
 .header-right {
@@ -50,139 +47,124 @@ header h1 {
 }
 
 .search-bar {
-    padding: 8px;
+    padding: 8px 12px;
     border-radius: 5px;
     border: none;
+    outline: none;
 }
 
-/* CART */
+.nav-links {
+    display: flex;
+    gap: 25px;
+    list-style: none;
+    align-items: center;
+}
 
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: #ff6600;
+}
+
+.auth-wrapper {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Cart Icon & Indicator badge */
 .cart {
     position: relative;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 22px;
     color: white;
+    transition: transform 0.2s ease;
 }
 
 .cart-count {
     position: absolute;
     top: -8px;
     right: -12px;
-
     background: red;
     color: white;
-
     border-radius: 50%;
     min-width: 20px;
     text-align: center;
     padding: 2px 6px;
-
     font-size: 12px;
+    font-weight: bold;
+    transition: transform 0.2s ease;
 }
-
-/* HAMBURGER */
 
 .hamburger {
     display: none;
-    font-size: 28px;
+    color: white;
+    font-size: 24px;
     cursor: pointer;
 }
 
-/* HERO */
-
+/* ==========================================================================
+   3. HERO SECTION
+   ========================================================================== */
 .hero {
     height: 90vh;
-
-    background:
-        linear-gradient(
-            rgba(0,0,0,0.5),
-            rgba(0,0,0,0.5)
-        ),
-        url("https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1600&q=80");
-
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                url("https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1600&q=80");
     background-size: cover;
     background-position: center;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     text-align: center;
     color: white;
 }
 
 .hero-content h1 {
     font-size: 3rem;
+    margin-bottom: 15px;
 }
 
 .hero-content p {
-    margin: 20px 0;
     font-size: 1.2rem;
+    margin-bottom: 20px;
 }
 
-.cta-btn {
-    display: inline-block;
-    padding: 12px 25px;
-
-    background: #ff6600;
-    color: white;
-
-    text-decoration: none;
-    border-radius: 5px;
-}
-
-.cta-btn {
-    display: inline-block;
-    padding: 12px 25px;
-    background: #ff6600;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-.cta-btn:hover {
-    background: #ff7b1f;
-    transform: translateY(-4px) scale(1.08);
-    box-shadow: 0 10px 25px rgba(255, 102, 0, 0.5);
-}
-
-.cta-btn:active {
-    transform: scale(0.98);
-}
-
-
-/* PRODUCTS */
-
+/* ==========================================================================
+   4. HOME / PRODUCT GRID SECTION
+   ========================================================================== */
 .products-section {
-    padding: 50px 20px;
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 0 20px;
 }
 
 .products-section h2 {
     text-align: center;
     margin-bottom: 30px;
+    font-size: 2rem;
 }
 
 .product-grid {
     display: grid;
-
-    grid-template-columns:
-        repeat(auto-fit, minmax(250px, 1fr));
-
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
 }
 
 .product-card {
     background: white;
-
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 15px;
-
     text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
 
-    box-shadow:
-        0 2px 10px rgba(0,0,0,0.1);
+.product-card:hover {
+    transform: translateY(-5px);
 }
 
 .product-card img {
@@ -192,249 +174,673 @@ header h1 {
 }
 
 .product-card h3 {
-    margin: 10px 0;
+    margin: 12px 0;
+    font-size: 1rem;
+    height: 50px;
+    overflow: hidden;
 }
 
 .product-card p {
     color: #ff6600;
+    font-size: 1.2rem;
     font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.product-card small {
+    display: block;
+    min-height: 50px;
+    color: #666;
 }
 
 .product-card button {
-    margin-top: 10px;
-
+    margin-top: 12px;
     background: #ff6600;
     color: white;
-
     border: none;
-    padding: 10px 15px;
-
-    border-radius: 5px;
+    padding: 10px 18px;
+    border-radius: 6px;
     cursor: pointer;
 }
 
-/* PRODUCT DETAILS */
+.product-card button:hover {
+    background: #e65c00;
+}
 
-.product-details {
-    max-width: 900px;
-    margin: auto;
-    text-align: center;
-    padding: 20px;
+/* ==========================================================================
+   5. SINGLE PRODUCT DETAIL PAGE
+   ========================================================================== */
+.product-page-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
+}
+
+.product-image-column {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.image-zoom-container {
+    width: 100%;
+    max-width: 450px;
+    height: 450px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .zoom-image {
-    width: 300px;
-    max-width: 100%;
-
-    transition: 0.3s;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 20px;
+    transition: transform 0.4s ease-out;
 }
 
-.zoom-image:hover {
+.image-zoom-container:hover .zoom-image {
     transform: scale(1.15);
 }
 
-.product-details h2 {
-    margin: 20px 0;
+.product-details-column {
+    flex: 1;
 }
 
-.product-details p {
-    margin: 10px 0;
+.product-title {
+    font-size: 2.2rem;
+    color: #222;
+    margin-bottom: 10px;
+    line-height: 1.3;
 }
 
-.product-details select {
-    padding: 8px;
+.product-price {
+    font-size: 1.8rem;
+    color: #ff6600;
+    font-weight: bold;
+    margin-bottom: 15px;
 }
 
-/* QUANTITY */
-
-.quantity-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    gap: 10px;
-    margin: 20px 0;
+.product-description {
+    color: #666;
+    line-height: 1.6;
+    font-size: 1rem;
+    margin-bottom: 25px;
 }
 
-.quantity-container button {
-    padding: 6px 12px;
+/* Variant selectors & Swatches */
+.product-options-wrapper {
+    width: 100%;
+    max-width: 380px;
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    margin-bottom: 25px;
 }
 
-/* COLORS */
+.option-group {
+    margin-bottom: 22px;
+}
+
+.option-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.custom-select-wrapper select {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 0.95rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #333;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.custom-select-wrapper select:focus {
+    border-color: #ff6600;
+}
 
 .color-options {
     display: flex;
-    justify-content: center;
     gap: 10px;
-    margin-top: 10px;
+    margin-top: 4px;
 }
 
 .color-btn {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    background: white;
+    padding: 8px 18px;
+    border: 1px solid #e1e1e6;
+    background: #fff;
+    color: #333;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.color-btn:hover {
+    border-color: #ff6600;
+    color: #ff6600;
 }
 
 .active-color {
-    background: orange;
-    color: white;
-}
-
-/* FLOATING ADD TO CART */
-
-#add-cart {
-    position: fixed;
-
-    bottom: 20px;
-    right: 20px;
-
     background: #ff6600;
-    color: white;
-
-    border: none;
-    padding: 15px 25px;
-
-    border-radius: 50px;
-
-    cursor: pointer;
-
-    z-index: 1000;
+    color: white !important;
+    border-color: #ff6600;
 }
 
-/* SUCCESS MESSAGE */
+.selected-color-text {
+    font-size: 0.85rem;
+    color: #777;
+    margin-top: 8px;
+}
 
-.cart-message {
-    position: fixed;
+#current-color {
+    font-weight: bold;
+    color: #111;
+}
 
-    top: 80px;
-    right: 20px;
-
-    background: #28a745;
-    color: white;
-
-    padding: 12px 20px;
-
+.quantity-container {
+    display: inline-flex;
+    align-items: center;
+    background: #f1f1f4;
+    border: 1px solid #e1e1e6;
     border-radius: 8px;
-
-    z-index: 2000;
+    overflow: hidden;
 }
 
-/* CART PAGE */
-
-.cart-page {
-    max-width: 1000px;
-    margin: auto;
+/* ==========================================================================
+   6. SHOPPING CART PAGE
+   ========================================================================== */
+.cart-container {
+    max-width: 1200px;
+    margin: 40px auto;
     padding: 20px;
+}
+
+.cart-container h1 {
+    margin-bottom: 25px;
 }
 
 .cart-item {
     display: flex;
     gap: 20px;
     align-items: center;
-
     background: white;
     padding: 20px;
-    margin-bottom: 20px;
-
     border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
 }
 
 .cart-item img {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     object-fit: contain;
 }
 
-.cart-item button {
+.cart-details {
+    flex: 1;
+}
+
+.cart-details h3 {
+    margin-bottom: 10px;
+}
+
+.cart-details p {
+    margin-bottom: 5px;
+}
+
+.cart-price {
+    color: #ff6600;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.quantity-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.quantity-controls button,
+.qty-btn {
+    width: 35px;
+    height: 35px;
+    border: none;
     background: #ff6600;
     color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-}
-
-#checkout-btn {
-    background: green;
-    color: white;
-
-    border: none;
-    padding: 12px 20px;
-
+    border-radius: 6px;
     cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
 }
 
-#checkout-btn:disabled {
-    background: gray;
+.qty-number {
+    padding: 0 8px;
+    font-weight: 600;
+    min-width: 28px;
+    text-align: center;
 }
 
-/* MOBILE */
+.remove-btn {
+    background: red !important;
+    width: auto !important;
+    padding: 10px 15px;
+}
 
+.cart-total {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: right;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.cart-total h2 {
+    margin-bottom: 20px;
+}
+
+.continue-btn,
+.checkout-btn {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #ff6600;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.checkout-btn:hover,
+.continue-btn:hover {
+    background: #e65c00;
+}
+
+/* ==========================================================================
+   7. ABOUT & CONTACT SECTIONS
+   ========================================================================== */
+.about-section {
+    max-width: 1200px;
+    margin: 80px auto;
+    padding: 0 20px;
+}
+
+.about-section h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.about-section p {
+    text-align: center;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.about-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+    transition: .3s;
+}
+
+.about-card:hover {
+    transform: translateY(-5px);
+}
+
+.about-card i {
+    font-size: 2rem;
+    color: #ff6600;
+    margin-bottom: 15px;
+}
+
+.about-card h3 {
+    margin-bottom: 10px;
+}
+
+/* Contact Module Layout */
+.contact-section {
+    max-width: 800px;
+    margin: 80px auto;
+    padding: 0 20px;
+}
+
+.contact-section h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.contact-section p {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.contact-form {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    font-family: inherit;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    border-color: #ff6600;
+}
+
+.contact-form button {
+    width: 100%;
+    border: none;
+    background: #ff6600;
+    color: white;
+    padding: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.contact-form button:hover {
+    background: #e65c00;
+}
+
+/* ==========================================================================
+   8. UTILITY GLOBAL BUTTONS
+   ========================================================================== */
+.cta-btn {
+    display: inline-block;
+    padding: 12px 25px;
+    background: #ff6600;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.cta-btn:hover {
+    background: #ff7b1f;
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 10px 25px rgba(255, 102, 0, 0.4);
+}
+
+.cta-btn:active {
+    transform: scale(0.98);
+}
+
+.main-add-btn {
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 14px 40px;
+    width: 100%;
+    max-width: 380px;
+}
+
+/* ==========================================================================
+   9. GLOBAL FOOTER
+   ========================================================================== */
+footer {
+    background: #222;
+    color: white;
+    text-align: center;
+    padding: 25px;
+    margin-top: 60px;
+}
+
+/* ==========================================================================
+   10. RESPONSIVE DESIGN & MEDIA QUERIES
+   ========================================================================== */
 @media (max-width: 768px) {
-
+    /* Navigation updates */
     .hamburger {
         display: block;
     }
 
     .nav-links {
         display: none;
-
-        position: absolute;
-        top: 70px;
-        right: 10px;
-
-        background: #222;
-
-        flex-direction: column;
-        padding: 15px;
-
-        border-radius: 10px;
     }
 
     .nav-links.active {
         display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        background: #222;
+        padding: 20px;
     }
 
-    .product-grid {
-        grid-template-columns: 1fr;
+    /* Details splits layout adjustment */
+    .product-page-container {
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
     }
 
-    .hero-content h1 {
-        font-size: 2rem;
+    .product-image-column,
+    .product-details-column {
+        width: 100%;
     }
 
+    .image-zoom-container {
+        height: 320px;
+    }
+
+    /* Cart UI layout alignment changes for clean listing layout views */
     .cart-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .cart-total {
         text-align: center;
     }
 }
-.header-right{
-    display:flex;
-    align-items:center;
-    gap:15px;
+/* ==========================================================================
+   STUBBORN ELEMENT OVERRIDES & REFINEMENTS
+   ========================================================================== */
+
+/* Fixes loose text spacing in the About section if grid classes aren't used */
+.about-section, .contact-section {
+    padding: 40px 20px;
 }
 
-.cart{
-    position:relative;
-    font-size:22px;
-    cursor:pointer;
-    color:white;
+/* Forces raw form labels to sit nicely above text fields */
+.contact-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #444;
+    font-size: 0.95rem;
 }
 
-.cart-count{
-    position:absolute;
-    top:-8px;
-    right:-12px;
-    background:red;
-    color:white;
-    border-radius:50%;
-    padding:2px 6px;
-    font-size:12px;
+/* Modern styling for the uncooperative default browser buttons in the cart */
+.quantity-controls button,
+.cart-item button {
+    background: #ff6600;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease;
 }
-.cart-summary {
-    background: white;
-    padding: 20px;
+
+.quantity-controls button:hover,
+.cart-item button:hover {
+    background: #e65c00;
+}
+
+/* Specific styling override for the cart page 'Remove' button to keep it distinct */
+.cart-item .remove-btn,
+.cart-item button:last-of-type {
+    background: #cc0000;
+    margin-left: 10px;
+}
+
+.cart-item .remove-btn:hover,
+.cart-item button:last-of-type:hover {
+    background: #a00000;
+}
+
+/* Fixes the layout spacing for Total price and action buttons at the bottom */
+.cart-total {
+    margin-top: 30px;
+}
+
+.cart-total h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.continue-btn,
+.checkout-btn {
+    font-size: 0.95rem;
+    font-weight: bold;
+    transition: background 0.2s ease;
+}
+/* ==========================================================================
+   LANDING PAGE MODULE ALIGNMENTS (INDEX.HTML LINK FIXES)
+   ========================================================================== */
+
+/* Maps generic info section structures to standard layout definitions */
+.info-section-wrapper {
+    max-width: 1200px;
+    margin: 80px auto;
+    padding: 0 20px;
+}
+
+.section-header h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.section-header p {
+    text-align: center;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+/* Maps grid setups */
+.about-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.feature-card {
+    background: #fff;
+    padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    margin-top: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+    transition: .3s;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-icon i {
+    font-size: 2rem;
+    color: #ff6600;
+    margin-bottom: 15px;
+}
+
+.feature-card h3 {
+    margin-bottom: 10px;
+}
+
+/* Form block clean up */
+.contact-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.styled-contact-form {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.field-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.field-wrapper label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #444;
+    font-size: 0.95rem;
+}
+
+/* Style normal fields within styled-contact-form */
+.styled-contact-form input,
+.styled-contact-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.styled-contact-form input:focus,
+.styled-contact-form textarea:focus {
+    border-color: #ff6600;
+}
+
+.styled-contact-form button.cta-btn {
+    width: 100%;
+    border: none;
+    padding: 14px;
+    font-size: 1rem;
+    cursor: pointer;
 }

@@ -7,25 +7,30 @@
 
     <link rel="stylesheet" href="styles/main.css">
 
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
-    <header>
+<header>
     <div class="logo">ShopEasy</div>
 
+    <div class="hamburger">
+        <i class="fas fa-bars"></i>
+    </div>
+
     <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="#products">Products</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="login.html">Login</a></li>
-    <li><a href="signup.html">Signup</a></li>
-</ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+
+        <span id="auth-nav-container" class="auth-wrapper">
+            <li><a href="login.html" id="login-link">Login</a></li>
+            <li><a href="signup.html" id="signup-link">Signup</a></li>
+        </span>
+    </ul>
 
     <div class="header-right">
-
         <input
             type="text"
             class="search-bar"
@@ -38,56 +43,155 @@
         >
             🛒 <span class="cart-count">0</span>
         </div>
-
     </div>
 </header>
 
-    
-    <section class="hero">
+<section class="hero">
     <div class="hero-content">
         <h1>Biggest Sale of the Year!</h1>
-        <p>Discover amazing deals on your favorite products. Shop now and save big.</p>
-        <a href="#products" class="cta-btn">Shop Now</a>
+        <p>
+            Discover amazing deals on your favorite products.
+            Shop now and save big.
+        </p>
+
+        <a href="#products" class="cta-btn">
+            Shop Now
+        </a>
     </div>
 </section>
-<section id="products" class="products-section"></section>
+
+<section id="products" class="products-section">
     <h2>Featured Products</h2>
 
     <div id="product-grid" class="product-grid">
-    <p id="loading">Loading products...</p>
-</div>
+        <p id="loading">Loading products...</p>
+    </div>
 </section>
+
+<section id="about" class="info-section-wrapper">
+
+    <div class="section-header">
+        <h2>About ShopEasy</h2>
+        <p>
+            ShopEasy provides quality products at affordable prices.
+            We focus on fast delivery, secure payments and a smooth
+            shopping experience for everyone.
+        </p>
+    </div>
+
+    <div class="about-features-grid">
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fa-solid fa-truck-fast"></i>
+            </div>
+            <h3>Fast Delivery</h3>
+            <p>
+                Get your products delivered quickly and safely.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3>Secure Payments</h3>
+            <p>
+                Shop confidently with encrypted and secure payment methods.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fa-solid fa-headset"></i>
+            </div>
+            <h3>24/7 Support</h3>
+            <p>
+                Our support team is available whenever you need assistance.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+<section id="contact" class="info-section-wrapper">
+
+    <div class="section-header">
+        <h2>Contact Us</h2>
+        <p>
+            Have questions or feedback? Send us a message.
+        </p>
+    </div>
+
+    <div class="contact-container">
+
+        <form id="contact-form" class="styled-contact-form">
+
+            <div class="field-wrapper">
+                <label for="form-name">Full Name</label>
+                <input
+                    type="text"
+                    id="form-name"
+                    placeholder="Enter your name"
+                    required
+                >
+            </div>
+
+            <div class="field-wrapper">
+                <label for="form-email">Email</label>
+                <input
+                    type="email"
+                    id="form-email"
+                    placeholder="Enter your email"
+                    required
+                >
+            </div>
+
+            <div class="field-wrapper">
+                <label for="form-message">Message</label>
+                <textarea
+                    id="form-message"
+                    rows="5"
+                    placeholder="Enter your message"
+                    required
+                ></textarea>
+            </div>
+
+            <button type="submit" class="cta-btn">
+                Send Message
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+<footer>
+    <p>© 2026 ShopEasy. All Rights Reserved.</p>
+</footer>
+
 <script src="scripts/app.js"></script>
+
+<script type="module" src="scripts/auth-state.js"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Target the element showing the counter and your add-to-cart buttons
-    const cartCountElement = document.querySelector('.cart-count');
-    
-    // Target both the floating action button AND individual product card buttons
-    const addToCartButtons = document.querySelectorAll('#add-cart, .product-card button, .product-details button');
 
-    // 2. Initialize the item count based on what's currently in your HTML
-    let currentCount = parseInt(cartCountElement.textContent) || 0;
+    const contactForm = document.getElementById('contact-form');
 
-    // 3. Listen for clicks on your add-to-cart elements
-    addToCartButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
+    if(contactForm){
+        contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            
-            // Increment the internal tracker
-            currentCount++;
-            
-            // Instantly update the DOM text without reloading the screen
-            cartCountElement.textContent = currentCount;
-            
-            // Optional visual pop effect when an item is added
-            cartCountElement.style.transform = 'scale(1.3)';
-            setTimeout(() => {
-                cartCountElement.style.transform = 'scale(1)';
-            }, 200);
+
+            alert("Thank you! Your message has been sent.");
+            contactForm.reset();
         });
-    });
+    }
+
 });
 </script>
+
 </body>
 </html>

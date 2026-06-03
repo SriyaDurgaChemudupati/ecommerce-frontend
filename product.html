@@ -3,24 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Details</title>
+    <title>Product Details - ShopEasy</title>
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
 <header>
-    <h1>ShopEasy</h1>
-
-    <div class="cart" onclick="window.location.href='cart.html'">
-        🛒 <span class="cart-count">0</span>
+    <div class="logo">ShopEasy</div>
+    <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#products">Products</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+        <span id="auth-nav-container" class="auth-wrapper">
+            <li><a href="login.html" id="login-link">Login</a></li>
+            <li><a href="signup.html" id="signup-link">Signup</a></li>
+        </span>
+    </ul>
+    <div class="header-right">
+        <input type="text" class="search-bar" placeholder="Search products...">
+        <div class="cart" onclick="window.location.href='cart.html'">
+            🛒 <span class="cart-count">0</span>
+        </div>
     </div>
 </header>
 
-<div id="product-details" class="product-details">
-    <p>Loading product...</p>
-</div>
+<main class="product-page-container">
+    <div class="product-image-column">
+        <div class="image-zoom-container">
+            <img id="product-img" src="" alt="Product Image" class="zoom-image">
+        </div>
+    </div>
 
-<script src="scripts/product.js"></script>
+    <div class="product-details-column">
+        <h1 id="product-title" class="product-title">Loading Product...</h1>
+        <p id="product-price" class="product-price">₹0.00</p>
+        <p id="product-desc" class="product-description"></p>
+        
+        <div class="product-options-wrapper">
+            <div class="option-group">
+                <label for="size-select">Size</label>
+                <div class="custom-select-wrapper">
+                    <select id="size-select">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+            </div>
 
-</body>
-</html>
+            <div class="option-group">
+                <label>Color</label>
+                <div class="color-options">
+                    <button type="button" class="color-btn active-color" data-color="Black">Black</button>
+                    <button type="button" class="color-btn" data-color="Blue">Blue</button>
+                    <button type="button" class="color-btn" data-color="Red">Red</button>
+                </div>
+                <p class="selected-color-text">Selected: <span id="current-color">Black</span></p>
+            </div>
+
+            <div class="option-group">
+                <label>Quantity</label>
+                <div class="quantity-container">
+                    <button type="button" class="qty-btn" id="qty-minus">—</button>
+                    <span class="qty-number" id="qty-display">1</span>
+                    <button type="button" class="qty-btn" id="qty-plus">+</button>
+                </div>
+            </div>
+        </div>
+
+        <button id="add-cart-main" class="cta-btn main-add-btn">
+            Add to Cart
+        </button>
+    </div>
+</main>
+
+<script type="module" src="scripts/auth-state.js"></script>
+
+```html
+<script type="module" src="scripts/auth-state.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const productId =
+        params.get("id");
+
+    let quantity = 1;
+
+    const productImg =
+        document.getElementById("product-img");
+
+    const productTitle =
+        document.getElementById("product-title");
+
+    const productPrice =
+        document.getElementById("product-price");
+
+    const productDesc =
+        document.getElementById("product-desc");
+
+    const qtyDisplay =
+        document.getElementById("qty-display");
+
+    const minusBtn =
+        document.getElementById("qty-minus");
+
+    const plusBtn =
+        document.getElementById("qty-plus");
+
+    const cartCount =
+        document.querySelector(".cart-count");
+
+    let selectedColor = "Black";
+
+    // Load Product
+    fetch(
+        `https://fakestoreapi.com/products/${productId}`
+    )
+    .then(response => response.json())
+    .then(product => {
+
+        productImg.src =
+            product.image;
+
+        productTitle.textContent =
+            product.title;
+
+        productPrice.textContent =
+            "₹" +
+            Math.round(product.price * 83);
+
+        productDesc.textContent =
+            product.description;
+
+        // Add To Cart
+        document
+        .getElementById("add-cart-main")
+        .addEventListener("click", () => {
+
+            let cart =
+                JSON.parse(
+                    localStorage.getItem("cart")
+                ) || [];
+
+            const selectedSize =
+                document.getElementById("size-select").value;
+
+            const existing =
+                cart.find(item =>
+                    item.id === product.id &&
+                    item.color === selectedColor &&
+                    item.size === selectedSize
+                );
+
+            if (existing) {
+
+                existing.quantity += quantity;
+
+            } else {
+
+                cart.push({
+                    ...product,
+                    quantity,
+                    color: selectedColor,
+                    size: selectedSize
+                });
+
+            }
+
+            localStorage.setItem(
+                "cart",
+                JSON.stringify(cart)
+            );
+
+            updateCartCount();
+
+            alert(
+                `Added ${quantity} item(s) to cart 🛒`
+            );
+
+        });
+
+    })
+    .catch(error => {
+
+        console.error(error);
+
+        productTitle.textContent =
+            "Failed to load product";
+
+    });
+
+    // Quantity Controls
+    plusBtn.addEventListener("click", () => {
+
+        quantity++;
+
+        qtyDisplay.textContent =
+            quantity;
+
+    });
+
+    minusBtn.addEventListener("click", () => {
+
+        if (quantity > 1) {
+
+            quantity--;
+
+            qtyDisplay.textContent =
+                quantity;
+
+        }
+
+    });
+
+    // Color Selection
+    document
+    .querySelectorAll(".color-btn")
+    .forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+            document
+            .querySelectorAll(".color-btn")
+            .forEach(b =>
+                b.classList.remove("active-color")
+            );
+
+            btn.classList.add(
+                "active-color"
+            );
+
+            selectedColor =
+                btn.dataset.color;
+
+            document.getElementById(
+                "current-color"
+            ).textContent =
+                selectedColor;
+
+        });
+
+    });
+
+    // Cart Count
+    function updateCartCount() {
+
+        const cart =
+            JSON.parse(
+                localStorage.getItem("cart")
+            ) || [];
+
+        const totalItems =
+            cart.reduce(
+                (sum, item) =>
+                    sum + item.quantity,
+                0
+            );
+
+        cartCount.textContent =
+            totalItems;
+
+    }
+
+    updateCartCount();
+
+});
+</script>
+```

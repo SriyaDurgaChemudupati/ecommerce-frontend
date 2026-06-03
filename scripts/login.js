@@ -1,74 +1,33 @@
-const togglePassword =
-    document.getElementById("toggle-login-password");
+import { auth } from "./firebase.js";
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const passwordInput =
-    document.getElementById("login-password");
+console.log("LOGIN JS LOADED");
 
-togglePassword.addEventListener("click", () => {
+// Login Form Event Handler
+document.getElementById("login-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-    if (passwordInput.type === "password") {
-        passwordInput.type = "text";
-    } else {
-        passwordInput.type = "password";
-    }
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-});
+    // Send sign-in payload to Firebase
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
 
-document
-    .getElementById("login-form")
-    .addEventListener("submit", (e) => {
-
-        e.preventDefault();
-
-        const email =
-            document.getElementById("login-email").value;
-
-        const password =
-            document.getElementById("login-password").value;
-
-        const user =
-            JSON.parse(localStorage.getItem("user"));
-
+        alert("Login Successful 🎉");
+        window.location.href = "index.html";
+    } catch (error) {
+        console.error("Login error details:", error.code, error.message);
+        
+        // Generic catch handling for invalid setups or missing matching users
         if (
-            user &&
-            user.email === email &&
-            user.password === password
+            error.code === 'auth/invalid-credential' || 
+            error.code === 'auth/user-not-found' || 
+            error.code === 'auth/wrong-password'
         ) {
-
-            alert("Login Successful!");
-
-            window.location.href = "index.html";
-
+            alert("Invalid Email or Password ❌");
         } else {
-
-            alert("Invalid Email or Password");
-
+            alert(`Authentication Error: ${error.message}`);
         }
-
-    });
-    const savedEmail =
-    localStorage.getItem("userEmail");
-
-const savedPassword =
-    localStorage.getItem("userPassword");
-
-if (
-    email === savedEmail &&
-    password === savedPassword
-) {
-
-    alert("Login Successful!");
-
-    window.location.href = "index.html";
-
-} else {
-
-    alert("Invalid Email or Password");
-}
-if (password.value !== confirmPassword.value) {
-
-    matchError.textContent =
-        "Passwords do not match";
-
-    return;
-}
+    }
+});
