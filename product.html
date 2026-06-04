@@ -74,11 +74,13 @@
         </div>
 
        <!-- Replace your existing "Add To Cart" button with this: -->
-<button class="wishlist-btn">
-  <span class="heart-icon">♥</span> Add to Wishlist
+ <button class="wishlist-btn"
+  data-id="1"
+  data-title="John Hardy Bracelet"
+  data-price="57685"
+  data-image="images/hero.jpg">
+  ❤️ Wishlist
 </button>
-    </div>
-</main>
 
 <script type="module" src="scripts/auth-state.js"></script>
 
@@ -88,194 +90,88 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-    const productId =
-        params.get("id");
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("id");
 
     let quantity = 1;
 
-    const productImg =
-        document.getElementById("product-img");
-
-    const productTitle =
-        document.getElementById("product-title");
-
-    const productPrice =
-        document.getElementById("product-price");
-
-    const productDesc =
-        document.getElementById("product-desc");
-
-    const qtyDisplay =
-        document.getElementById("qty-display");
-
-    const minusBtn =
-        document.getElementById("qty-minus");
-
-    const plusBtn =
-        document.getElementById("qty-plus");
-
-    const cartCount =
-        document.querySelector(".cart-count");
+    const productImg = document.getElementById("product-img");
+    const productTitle = document.getElementById("product-title");
+    const productPrice = document.getElementById("product-price");
+    const productDesc = document.getElementById("product-desc");
+    const qtyDisplay = document.getElementById("qty-display");
+    const minusBtn = document.getElementById("qty-minus");
+    const plusBtn = document.getElementById("qty-plus");
+    const cartCount = document.querySelector(".cart-count");
 
     let selectedColor = "Black";
 
-    // Load Product
-    fetch(
-        `https://fakestoreapi.com/products/${productId}`
-    )
-    .then(response => response.json())
-    .then(product => {
+    // Load product
+    fetch(`https://fakestoreapi.com/products/${productId}`)
+        .then(res => res.json())
+        .then(product => {
 
-        productImg.src =
-            product.image;
+            productImg.src = product.image;
+            productTitle.textContent = product.title;
+            productPrice.textContent = "₹" + Math.round(product.price * 83);
+            productDesc.textContent = product.description;
 
-        productTitle.textContent =
-            product.title;
+            document.getElementById("add-cart-main")
+                .addEventListener("click", () => {
 
-        productPrice.textContent =
-            "₹" +
-            Math.round(product.price * 83);
+                    let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-        productDesc.textContent =
-            product.description;
+                    const selectedSize = document.getElementById("size-select").value;
 
-        // Add To Cart
-        document
-        .getElementById("add-cart-main")
-        .addEventListener("click", () => {
+                    const existing = cart.find(item =>
+                        item.id === product.id &&
+                        item.color === selectedColor &&
+                        item.size === selectedSize
+                    );
 
-            let cart =
-                JSON.parse(
-                    localStorage.getItem("cart")
-                ) || [];
+                    if (existing) {
+                        existing.quantity += quantity;
+                    } else {
+                        cart.push({
+                            ...product,
+                            quantity,
+                            color: selectedColor,
+                            size: selectedSize
+                        });
+                    }
 
-            const selectedSize =
-                document.getElementById("size-select").value;
+                    localStorage.setItem("cart", JSON.stringify(cart));
+                    updateCartCount();
 
-            const existing =
-                cart.find(item =>
-                    item.id === product.id &&
-                    item.color === selectedColor &&
-                    item.size === selectedSize
-                );
-
-            if (existing) {
-
-                existing.quantity += quantity;
-
-            } else {
-
-                cart.push({
-                    ...product,
-                    quantity,
-                    color: selectedColor,
-                    size: selectedSize
+                    alert(`Added ${quantity} item(s) to cart 🛒`);
                 });
-
-            }
-
-            localStorage.setItem(
-                "cart",
-                JSON.stringify(cart)
-            );
-
-            updateCartCount();
-
-            alert(
-                `Added ${quantity} item(s) to cart 🛒`
-            );
 
         });
 
-    })
-    .catch(error => {
-
-        console.error(error);
-
-        productTitle.textContent =
-            "Failed to load product";
-
-    });
-
-    // Quantity Controls
+    // quantity controls
     plusBtn.addEventListener("click", () => {
-
         quantity++;
-
-        qtyDisplay.textContent =
-            quantity;
-
+        qtyDisplay.textContent = quantity;
     });
 
     minusBtn.addEventListener("click", () => {
-
         if (quantity > 1) {
-
             quantity--;
-
-            qtyDisplay.textContent =
-                quantity;
-
+            qtyDisplay.textContent = quantity;
         }
-
     });
 
-    // Color Selection
-    document
-    .querySelectorAll(".color-btn")
-    .forEach(btn => {
-
-        btn.addEventListener("click", () => {
-
-            document
-            .querySelectorAll(".color-btn")
-            .forEach(b =>
-                b.classList.remove("active-color")
-            );
-
-            btn.classList.add(
-                "active-color"
-            );
-
-            selectedColor =
-                btn.dataset.color;
-
-            document.getElementById(
-                "current-color"
-            ).textContent =
-                selectedColor;
-
-        });
-
-    });
-
-    // Cart Count
     function updateCartCount() {
-
-        const cart =
-            JSON.parse(
-                localStorage.getItem("cart")
-            ) || [];
-
-        const totalItems =
-            cart.reduce(
-                (sum, item) =>
-                    sum + item.quantity,
-                0
-            );
-
-        cartCount.textContent =
-            totalItems;
-
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        cartCount.textContent = cart.reduce((sum, i) => sum + i.quantity, 0);
     }
 
     updateCartCount();
 
 });
 </script>
-```
+
+<!-- Wishlist MUST be outside -->
+<script src="scripts/wishlist.js"></script>
+</body>
+</html>

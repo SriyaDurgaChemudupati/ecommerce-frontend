@@ -5,9 +5,18 @@ import {
   updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+// ---------------- DOM ELEMENTS ----------------
+const form = document.getElementById("signup-form");
+const errorEl = document.getElementById("signup-error");
+
+const nameInput = document.getElementById("signup-name");
+const emailInput = document.getElementById("signup-email");
 const passwordInput = document.getElementById("signup-password");
 const confirmInput = document.getElementById("signup-confirm-password");
 
+const confirmMsg = document.getElementById("confirm-msg");
+
+// ---------------- RULE ELEMENTS ----------------
 const ruleLength = document.getElementById("rule-length");
 const ruleLower = document.getElementById("rule-lower");
 const ruleUpper = document.getElementById("rule-upper");
@@ -15,75 +24,60 @@ const ruleNumber = document.getElementById("rule-number");
 const ruleSpecial = document.getElementById("rule-special");
 const ruleSpace = document.getElementById("rule-space");
 
-const strengthBar = document.getElementById("password-strength-bar");
-const confirmMsg = document.getElementById("confirm-msg");
-
+// ---------------- RULE FUNCTION ----------------
 function updateRule(element, valid) {
-    element.style.color = valid ? "green" : "red";
-    element.style.fontWeight = valid ? "600" : "400";
+  element.style.color = valid ? "green" : "red";
+  element.style.fontWeight = valid ? "600" : "400";
 }
 
+// ---------------- PASSWORD RULE CHECK (LIVE) ----------------
 passwordInput.addEventListener("input", () => {
+  const password = passwordInput.value;
 
-    const password = passwordInput.value;
+  const lengthOk = password.length >= 8;
+  const lowerOk = /[a-z]/.test(password);
+  const upperOk = /[A-Z]/.test(password);
+  const numberOk = /\d/.test(password);
+  const specialOk = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  const noSpaceOk = !/\s/.test(password);
 
-    const lengthOk = password.length >= 8;
-    const lowerOk = /[a-z]/.test(password);
-    const upperOk = /[A-Z]/.test(password);
-    const numberOk = /\d/.test(password);
-    const specialOk = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    const noSpaceOk = !/\s/.test(password);
-
-    updateRule(ruleLength, lengthOk);
-    updateRule(ruleLower, lowerOk);
-    updateRule(ruleUpper, upperOk);
-    updateRule(ruleNumber, numberOk);
-    updateRule(ruleSpecial, specialOk);
-    updateRule(ruleSpace, noSpaceOk);
-
-    let score = 0;
-
-    if (lengthOk) score++;
-    if (lowerOk) score++;
-    if (upperOk) score++;
-    if (numberOk) score++;
-    if (specialOk) score++;
-    if (noSpaceOk) score++;
-
-    strengthBar.style.width = `${(score / 6) * 100}%`;
-
-    if (score <= 2) {
-        strengthBar.style.background = "#ef4444";
-    } else if (score <= 4) {
-        strengthBar.style.background = "#f59e0b";
-    } else {
-        strengthBar.style.background = "#22c55e";
-    }
+  updateRule(ruleLength, lengthOk);
+  updateRule(ruleLower, lowerOk);
+  updateRule(ruleUpper, upperOk);
+  updateRule(ruleNumber, numberOk);
+  updateRule(ruleSpecial, specialOk);
+  updateRule(ruleSpace, noSpaceOk);
 });
 
+// ---------------- PASSWORD MATCH ----------------
 confirmInput.addEventListener("input", () => {
-
-    if (
-        confirmInput.value === passwordInput.value &&
-        confirmInput.value !== ""
-    ) {
-        confirmMsg.textContent = "✓ Passwords match";
-        confirmMsg.style.color = "green";
-    } else {
-        confirmMsg.textContent = "Passwords do not match";
-        confirmMsg.style.color = "red";
-    }
-
+  if (
+    confirmInput.value === passwordInput.value &&
+    confirmInput.value !== ""
+  ) {
+    confirmMsg.textContent = "✓ Passwords match";
+    confirmMsg.style.color = "green";
+  } else {
+    confirmMsg.textContent = "Passwords do not match";
+    confirmMsg.style.color = "red";
+  }
 });
+
+// ---------------- SIGNUP ----------------
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   errorEl.textContent = "";
 
-  const name = document.getElementById("signup-name").value.trim();
-  const email = document.getElementById("signup-email").value.trim();
-  const password = document.getElementById("signup-password").value;
-  const confirmPassword = document.getElementById("signup-confirm-password").value;
+  const name = nameInput.value.trim();
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+  const confirmPassword = confirmInput.value;
+
+  if (!name || !email || !password || !confirmPassword) {
+    errorEl.textContent = "Please fill all fields";
+    return;
+  }
 
   if (password !== confirmPassword) {
     errorEl.textContent = "Passwords do not match";
@@ -101,13 +95,12 @@ form.addEventListener("submit", async (e) => {
       displayName: name
     });
 
-    await userCredential.user.reload();
-
     alert("Signup successful!");
 
     window.location.href = "index.html";
 
   } catch (error) {
+    console.log(error.code, error.message);
     errorEl.textContent = error.message;
   }
 });

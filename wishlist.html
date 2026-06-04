@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Wishlist</title>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+
+  <h1>Your Wishlist ❤️</h1>
+
+  <div id="wishlist-container"></div>
+
+  <script src="scripts/wishlist.js">
+const container = document.getElementById("wishlist-container");
+
+let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+container.innerHTML = wishlist.map(item => `
+  <div class="wish-item">
+    <p>${item.title}</p>
+  </div>
+`).join("");
+</script>
+</body>
+</html>

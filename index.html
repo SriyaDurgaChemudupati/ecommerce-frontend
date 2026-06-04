@@ -13,45 +13,37 @@
 </head>
 <body>
 <header>
+
+  <nav class="nav">
+
     <div class="logo">ShopEasy</div>
 
-    <div class="hamburger">
-        <i class="fas fa-bars"></i>
-    </div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
 
-   <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="#products">Products</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <input type="text" class="search-bar" placeholder="Search products...">
 
-    <li class="auth-wrapper">
-        <div id="auth-nav-container">
-            <a href="login.html">Login</a>
-            <a href="signup.html">Signup</a>
-        </div>
-    </li>
-</ul>
+    <div id="auth-nav-container"></div>
 
-<div class="header-right">
+    <div class="icons-group">
 
-    <input
-        type="text"
-        class="search-bar"
-        placeholder="Search products..."
-    >
+  <div class="wishlist" onclick="window.location.href='wishlist.html'">
+    ❤️ <span class="wishlist-count">0</span>
+  </div>
 
-    <div
-        class="cart"
-        onclick="window.location.href='cart.html'"
-    >
-        🛒 <span class="cart-count">0</span>
-    </div>
+  <div class="cart" onclick="window.location.href='cart.html'">
+    🛒 <span class="cart-count">0</span>
+  </div>
 
 </div>
-    
-</header>
 
+  </nav>
+
+</header>
 <style>
 .hero {
     height: 90vh;

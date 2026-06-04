@@ -201,3 +201,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadAndRenderCart();
 });
+const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+const container = document.getElementById("cart-items");
+
+container.innerHTML = cart.map(item => `
+    <div class="cart-item">
+        <h3>${item.title}</h3>
+        <p>Qty: ${item.quantity}</p>
+    </div>
+`).join("");
